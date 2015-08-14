@@ -15,6 +15,8 @@
  ******************************************************************************/ 
 package com.inari.firefly.libgdx;
 
+import java.util.Iterator;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.GL20;
@@ -33,9 +35,9 @@ import com.inari.firefly.asset.Asset;
 import com.inari.firefly.asset.event.AssetEvent;
 import com.inari.firefly.entity.ETransform;
 import com.inari.firefly.renderer.BlendMode;
+import com.inari.firefly.renderer.TextureAsset;
 import com.inari.firefly.renderer.sprite.SpriteAsset;
 import com.inari.firefly.renderer.sprite.SpriteRenderable;
-import com.inari.firefly.renderer.sprite.TextureAsset;
 import com.inari.firefly.sound.Sound;
 import com.inari.firefly.sound.SoundAsset;
 import com.inari.firefly.sound.event.SoundEvent;
@@ -55,7 +57,7 @@ public final class GDXLowerSystemImpl implements ILowerSystemFacade {
     private final DynArray<com.badlogic.gdx.audio.Sound> sounds;
     private final DynArray<Music> music;
     
-    private Viewport baseViewport;
+    //private Viewport baseViewport;
     private Viewport activeViewport = null;
     
     private final SpriteBatch spriteBatch;
@@ -149,7 +151,7 @@ public final class GDXLowerSystemImpl implements ILowerSystemFacade {
     @Override
     public final void onViewEvent( ViewEvent event ) {
         View view = event.view;
-        int viewportOrder = view.getOrder();
+        int viewportId = view.index();
         switch ( event.eventType ) {
             case VIEW_CREATED: {
                 Viewport viewport;
@@ -157,13 +159,12 @@ public final class GDXLowerSystemImpl implements ILowerSystemFacade {
                     viewport = createVirtualViewport( view );
                 } else {
                     viewport = createBaseViewport( view );
-                    baseViewport = viewport;
                 }
-                viewports.set( viewportOrder, viewport );
+                viewports.set( viewportId, viewport );
                 break;
             }
             case VIEW_DELETED: {
-                Viewport viewport = viewports.remove( viewportOrder );
+                Viewport viewport = viewports.remove( viewportId );
                 if ( viewport != null ) {
                     viewport.dispose();
                 }
@@ -175,9 +176,9 @@ public final class GDXLowerSystemImpl implements ILowerSystemFacade {
 
     @Override
     public final void startRendering( View view ) {
-        activeViewport = viewports.get( view.getOrder() );
-        activeViewport.update( spriteBatch );
-        if ( activeViewport != baseViewport ) {
+        activeViewport = viewports.get( view.index() );
+        activeViewport.update( spriteBatch, view.getZoom(), view.getClearColor() );
+        if ( !view.isBase() ) {
             activeViewport.fbo.begin();
         }
     }
@@ -229,23 +230,22 @@ public final class GDXLowerSystemImpl implements ILowerSystemFacade {
     @Override
     public final void endRendering( View view ) {
         spriteBatch.flush();
-        if ( activeViewport != baseViewport ) {
+        if ( !view.isBase() ) {
             activeViewport.fbo.end();
         }
         activeViewport = null;
     }
 
     @Override
-    public final void flush() {
-        if ( viewports.size() > 1 ) {
+    public final void flush( Iterator<View> virtualViews ) {
+        if ( virtualViews != null && virtualViews.hasNext() ) {
             
             spriteBatch.begin();
             
-            for ( Viewport viewport : viewports ) {
-                if ( viewport == baseViewport ) {
-                    continue;
-                }
-                Rectangle bounds = viewport.view.getBounds();
+            while ( virtualViews.hasNext() ) {
+                View virtualView = virtualViews.next();
+                Viewport viewport = viewports.get( virtualView.index() );
+                Rectangle bounds = virtualView.getBounds();
                 spriteBatch.draw( viewport.fboTexture, bounds.x, bounds.y );
             }
             
@@ -311,7 +311,7 @@ public final class GDXLowerSystemImpl implements ILowerSystemFacade {
     
     private Viewport createBaseViewport( View view ) {
         OrthographicCamera camera = new OrthographicCamera( Gdx.graphics.getWidth(), Gdx.graphics.getHeight() );
-        return new Viewport( view, camera, null, null );
+        return new Viewport( camera, null, null );
     }
 
     private Viewport createVirtualViewport( View view ) {
@@ -321,18 +321,16 @@ public final class GDXLowerSystemImpl implements ILowerSystemFacade {
         TextureRegion textureRegion = new TextureRegion( frameBuffer.getColorBufferTexture() );
         textureRegion.flip( false, true );
         
-        return new Viewport( view, camera, frameBuffer, textureRegion );
+        return new Viewport( camera, frameBuffer, textureRegion );
     }
 
     private static final class Viewport {
-        final View view;
         final OrthographicCamera camera;
         final FrameBuffer fbo;
         final TextureRegion fboTexture;
         
-        Viewport( View view, OrthographicCamera camera, FrameBuffer fbo, TextureRegion fboTexture ) {
+        Viewport( OrthographicCamera camera, FrameBuffer fbo, TextureRegion fboTexture ) {
             super();
-            this.view = view;
             this.camera = camera;
             this.fbo = fbo;
             this.fboTexture = fboTexture;
@@ -344,12 +342,10 @@ public final class GDXLowerSystemImpl implements ILowerSystemFacade {
             }
         }
 
-        final void update( SpriteBatch spriteBatch ) {
-            float zoom = view.getZoom();
+        final void update( SpriteBatch spriteBatch, float zoom, RGBColor clearColor ) {
             camera.setToOrtho( true, Gdx.graphics.getWidth() * zoom, Gdx.graphics.getHeight() * zoom );
             spriteBatch.setProjectionMatrix( camera.combined );
             
-            RGBColor clearColor = view.getClearColor();
             Gdx.graphics.getGL20().glClearColor( clearColor.r, clearColor.g, clearColor.b, clearColor.a );
             Gdx.graphics.getGL20().glClear( GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT );
         }
