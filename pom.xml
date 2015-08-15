@@ -1,7 +1,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <groupId>inari-firefly-libGDX</groupId>
-  <artifactId>inari-firefly-libGDX</artifactId>
+  <groupId>com.inari</groupId>
+  <artifactId>firefly_libGDX</artifactId>
   <version>0.0.1-SNAPSHOT</version>
   <build>
     <plugins>
@@ -15,26 +15,38 @@
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-shade-plugin</artifactId>
+        <artifactId>maven-source-plugin</artifactId>
         <executions>
           <execution>
-            <phase>package</phase>
+            <id>attach-sources</id>
             <goals>
-              <goal>shade</goal>
-            </goals>
-            <configuration>
-              <artifactSet>
-                <excludes>
-                  <exclude>com.badlogicgames.gdx:gdx</exclude>
-                  <exclude>junit:junit</exclude>
-                  <exclude>org.hamcrest:hamcrest-core</exclude>
-                </excludes>
-              </artifactSet>
-            </configuration>
-          </execution>
+              <goal>jar</goal>
+           </goals>
+         </execution>
         </executions>
       </plugin>
-    </plugins>
+<!--       <plugin> -->
+<!--         <groupId>org.apache.maven.plugins</groupId> -->
+<!--         <artifactId>maven-shade-plugin</artifactId> -->
+<!--         <executions> -->
+<!--           <execution> -->
+<!--             <phase>package</phase> -->
+<!--             <goals> -->
+<!--               <goal>shade</goal> -->
+<!--             </goals> -->
+<!--             <configuration> -->
+<!--               <artifactSet> -->
+<!--                 <excludes> -->
+<!--                   <exclude>com.badlogicgames.gdx:gdx</exclude> -->
+<!--                   <exclude>junit:junit</exclude> -->
+<!--                   <exclude>org.hamcrest:hamcrest-core</exclude> -->
+<!--                 </excludes> -->
+<!--               </artifactSet> -->
+<!--             </configuration> -->
+<!--           </execution> -->
+<!--         </executions> -->
+<!--       </plugin> -->
+     </plugins>
   </build>
   <dependencies>
     <dependency>
@@ -43,9 +55,9 @@
       <version>1.5.6</version>
     </dependency>
     <dependency>
-      <groupId>inari-firefly</groupId>
-      <artifactId>inari-firefly-lib</artifactId>
-      <version>0.0.1-SNAPSHOT</version>
+    	<groupId>com.inari</groupId>
+    	<artifactId>firefly_lib</artifactId>
+    	<version>0.0.1-SNAPSHOT</version>
     </dependency>
   </dependencies> 
 </project>

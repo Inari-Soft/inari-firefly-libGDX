@@ -180,6 +180,8 @@ public final class GDXLowerSystemImpl implements ILowerSystemFacade {
         activeViewport.update( spriteBatch, view.getZoom(), view.getClearColor() );
         if ( !view.isBase() ) {
             activeViewport.fbo.begin();
+        } else {
+            spriteBatch.begin();
         }
     }
 
@@ -195,6 +197,7 @@ public final class GDXLowerSystemImpl implements ILowerSystemFacade {
             }
             
             spriteBatch.setColor( renderColor.r, renderColor.g, renderColor.b, renderColor.a );
+            spriteBatch.draw( sprite, 0, 0 );
             spriteBatch.draw(
                 sprite,
                 transform.getXpos(),
@@ -232,6 +235,8 @@ public final class GDXLowerSystemImpl implements ILowerSystemFacade {
         spriteBatch.flush();
         if ( !view.isBase() ) {
             activeViewport.fbo.end();
+        } else {
+            spriteBatch.end();
         }
         activeViewport = null;
     }
