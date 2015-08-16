@@ -27,13 +27,13 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.inari.commons.event.IEventDispatcher;
+import com.inari.commons.geom.Position;
 import com.inari.commons.geom.Rectangle;
 import com.inari.commons.graphics.RGBColor;
 import com.inari.commons.lang.indexed.Indexer;
 import com.inari.commons.lang.list.DynArray;
 import com.inari.firefly.asset.Asset;
 import com.inari.firefly.asset.event.AssetEvent;
-import com.inari.firefly.entity.ETransform;
 import com.inari.firefly.renderer.BlendMode;
 import com.inari.firefly.renderer.TextureAsset;
 import com.inari.firefly.renderer.sprite.SpriteAsset;
@@ -57,11 +57,9 @@ public final class GDXLowerSystemImpl implements ILowerSystemFacade {
     private final DynArray<com.badlogic.gdx.audio.Sound> sounds;
     private final DynArray<Music> music;
     
-    //private Viewport baseViewport;
-    private Viewport activeViewport = null;
-    
     private final SpriteBatch spriteBatch;
     
+    private Viewport activeViewport = null;
     private BlendMode currentBlendMode = BlendMode.NONE;
     
     GDXLowerSystemImpl() {
@@ -177,7 +175,7 @@ public final class GDXLowerSystemImpl implements ILowerSystemFacade {
     @Override
     public final void startRendering( View view ) {
         activeViewport = viewports.get( view.index() );
-        activeViewport.update( spriteBatch, view.getZoom(), view.getClearColor() );
+        activeViewport.update( spriteBatch, view.getWorldPosition(), view.getZoom(), view.getClearColor() );
         if ( !view.isBase() ) {
             activeViewport.fbo.begin();
         } else {
@@ -186,48 +184,27 @@ public final class GDXLowerSystemImpl implements ILowerSystemFacade {
     }
 
     @Override
-    public final void renderSprite( SpriteRenderable renderableSprite, ETransform transform ) {
-        if ( transform.hasScale() || transform.hasRotation() ) {
-            TextureRegion sprite = sprites.get( renderableSprite.getSpriteId() );
-            RGBColor renderColor = renderableSprite.getTintColor();
-            BlendMode blendMode = renderableSprite.getBlendMode();
-            if ( currentBlendMode != blendMode ) {
-                currentBlendMode = blendMode;
-                spriteBatch.setBlendFunction( currentBlendMode.gl11SourceConst, currentBlendMode.gl11DestConst );
-            }
-            
-            spriteBatch.setColor( renderColor.r, renderColor.g, renderColor.b, renderColor.a );
-            spriteBatch.draw( sprite, 0, 0 );
-            spriteBatch.draw(
-                sprite,
-                transform.getXpos(),
-                transform.getYpos(),
-                transform.getRotationXPos(),
-                transform.getRotationYPos(),
-                sprite.getRegionWidth(),
-                sprite.getRegionHeight(),
-                transform.getXscale(),
-                transform.getYscale(),
-                transform.getRotation()
-            );
-            
-            return;
-        }
-        
-        renderSprite( renderableSprite, transform.getXpos(), transform.getYpos() );
+    public final void renderSprite( SpriteRenderable spriteRenderable, float xpos, float ypos ) {
+        setColorAndBlendMode( spriteRenderable );
+        TextureRegion sprite = sprites.get( spriteRenderable.getSpriteId() );
+        spriteBatch.draw( sprite, xpos, xpos );
+    }
+    
+    @Override
+    public void renderSprite( SpriteRenderable spriteRenderable, float x, float y, float pivotx, float pivoty, float scalex, float scaley,float rotation ) {
+        setColorAndBlendMode( spriteRenderable );
+        TextureRegion sprite = sprites.get( spriteRenderable.getSpriteId() );
+        spriteBatch.draw( sprite, x, y, pivotx, pivoty, sprite.getRegionWidth(), sprite.getRegionHeight(), scalex, scaley, rotation );
     }
 
-    @Override
-    public final void renderSprite( SpriteRenderable renderableSprite, float xpos, float ypos ) {
-        TextureRegion sprite = sprites.get( renderableSprite.getSpriteId() );
-        RGBColor renderColor = renderableSprite.getTintColor();
+    private void setColorAndBlendMode( SpriteRenderable sprite ) {
+        RGBColor renderColor = sprite.getTintColor();
+        BlendMode blendMode = sprite.getBlendMode();
         spriteBatch.setColor( renderColor.r, renderColor.g, renderColor.b, renderColor.a );
-        
-        spriteBatch.draw( 
-            sprite,
-            xpos,
-            xpos
-        );
+        if ( currentBlendMode != blendMode ) {
+            currentBlendMode = blendMode;
+            spriteBatch.setBlendFunction( currentBlendMode.gl11SourceConst, currentBlendMode.gl11DestConst );
+        }
     }
 
     @Override
@@ -347,8 +324,11 @@ public final class GDXLowerSystemImpl implements ILowerSystemFacade {
             }
         }
 
-        final void update( SpriteBatch spriteBatch, float zoom, RGBColor clearColor ) {
+        final void update( SpriteBatch spriteBatch, Position worldPosition, float zoom, RGBColor clearColor ) {
             camera.setToOrtho( true, Gdx.graphics.getWidth() * zoom, Gdx.graphics.getHeight() * zoom );
+            camera.position.x = camera.position.x + worldPosition.x;
+            camera.position.y = camera.position.y + worldPosition.y;
+            camera.update();
             spriteBatch.setProjectionMatrix( camera.combined );
             
             Gdx.graphics.getGL20().glClearColor( clearColor.r, clearColor.g, clearColor.b, clearColor.a );
