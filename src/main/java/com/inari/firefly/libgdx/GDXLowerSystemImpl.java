@@ -257,7 +257,8 @@ public final class GDXLowerSystemImpl implements ILowerSystemFacade {
 
     private void createTexture( TextureAsset asset ) {
         Texture texture = new Texture( asset.getResourceName() );
-        
+        asset.setWidth( texture.getWidth() );
+        asset.setHeight( texture.getHeight() );
         // TODO handle with dynamic attributes for Texture
         
         textures.set( asset.index(), texture );
