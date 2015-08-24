@@ -43,7 +43,6 @@ import com.inari.firefly.sound.SoundAsset;
 import com.inari.firefly.sound.event.SoundEvent;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.ILowerSystemFacade;
-import com.inari.firefly.system.Input;
 import com.inari.firefly.system.view.View;
 import com.inari.firefly.system.view.event.ViewEvent;
 
@@ -345,12 +344,6 @@ public final class GDXLowerSystemImpl implements ILowerSystemFacade {
     @Override
     public int getScreenHeight() {
         return Gdx.graphics.getHeight();
-    }
-
-    @Override
-    public Input getInput() {
-        // TODO Auto-generated method stub
-        return null;
     }
 
 }
