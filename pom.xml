@@ -50,14 +50,14 @@
   </build>
   <dependencies>
     <dependency>
-      <groupId>com.badlogicgames.gdx</groupId>
-      <artifactId>gdx</artifactId>
-      <version>1.5.6</version>
-    </dependency>
-    <dependency>
     	<groupId>com.inari</groupId>
     	<artifactId>firefly_lib</artifactId>
     	<version>0.0.1-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+    	<groupId>com.badlogicgames.gdx</groupId>
+    	<artifactId>gdx</artifactId>
+    	<version>1.6.5</version>
     </dependency>
   </dependencies> 
 </project>
