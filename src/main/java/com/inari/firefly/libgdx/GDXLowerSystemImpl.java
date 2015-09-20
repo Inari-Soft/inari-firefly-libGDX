@@ -19,6 +19,7 @@ import java.util.Iterator;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Pixmap.Format;
@@ -38,9 +39,7 @@ import com.inari.firefly.renderer.BlendMode;
 import com.inari.firefly.renderer.SpriteRenderable;
 import com.inari.firefly.renderer.TextureAsset;
 import com.inari.firefly.renderer.sprite.SpriteAsset;
-import com.inari.firefly.sound.Sound;
 import com.inari.firefly.sound.SoundAsset;
-import com.inari.firefly.sound.event.SoundEvent;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.ILowerSystemFacade;
 import com.inari.firefly.system.view.View;
@@ -75,7 +74,6 @@ public final class GDXLowerSystemImpl implements ILowerSystemFacade {
        IEventDispatcher eventDispatcher = context.getComponent( FFContext.EVENT_DISPATCHER );
        eventDispatcher.register( AssetEvent.class, this );
        eventDispatcher.register( ViewEvent.class, this );
-       eventDispatcher.register( SoundEvent.class, this );
        
         // TODO init sprite batch???
     }
@@ -85,7 +83,6 @@ public final class GDXLowerSystemImpl implements ILowerSystemFacade {
         IEventDispatcher eventDispatcher = context.getComponent( FFContext.EVENT_DISPATCHER );
         eventDispatcher.unregister( AssetEvent.class, this );
         eventDispatcher.unregister( ViewEvent.class, this );
-        eventDispatcher.unregister( SoundEvent.class, this );
         
         for ( Viewport viewport : viewports ) {
             viewport.dispose();
@@ -130,19 +127,68 @@ public final class GDXLowerSystemImpl implements ILowerSystemFacade {
     
 
     @Override
-    public final void onSoundEvent( SoundEvent event ) {
-        if ( event.sound.isStreaming() ) {
-            
-        } else {
-            
+    public final long playSound( int soundId, boolean looping, float volume, float pitch, float pan ) {
+        Sound sound = sounds.get( soundId );
+        if ( sound == null ) {
+            return -1;
         }
         
+        return sound.play( volume, pitch, pan );
     }
 
     @Override
-    public void soundAttributesChanged( Sound sound ) {
-        // TODO Auto-generated method stub
+    public final void changeSound( int soundId, long instanceId, float volume, float pitch, float pan ) {
+        Sound sound = sounds.get( soundId );
+        if ( sound == null ) {
+            return;
+        }
         
+        sound.setPan( instanceId, pan, volume );
+        sound.setPitch( instanceId, pitch );
+        sound.setVolume( instanceId, volume );
+    }
+
+    @Override
+    public final void stopSound( int soundId, long instanceId ) {
+        Sound sound = sounds.get( soundId );
+        if ( sound == null ) {
+            return;
+        }
+        
+        sound.stop( instanceId );
+    }
+
+    @Override
+    public final void playMusic( int soundId, boolean looping, float volume, float pan ) {
+        Music sound = music.get( soundId );
+        if ( sound == null || sound.isPlaying() ) {
+            return;
+        }
+        
+        sound.setPan( pan, volume );
+        sound.setLooping( looping );
+        
+        sound.play();
+    }
+
+    @Override
+    public final void changeMusic( int soundId, float volume, float pan ) {
+        Music sound = music.get( soundId );
+        if ( sound == null || sound.isPlaying() ) {
+            return;
+        }
+        
+        sound.setPan( pan, volume );
+    }
+
+    @Override
+    public final void stopMusic( int soundId ) {
+        Music sound = music.get( soundId );
+        if ( sound == null || !sound.isPlaying() ) {
+            return;
+        }
+        
+        sound.stop();
     }
 
     @Override
