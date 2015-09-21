@@ -3,7 +3,7 @@ package com.inari.firefly.libgdx;
 import com.inari.commons.event.EventDispatcher;
 import com.inari.firefly.animation.AnimationSystem;
 import com.inari.firefly.asset.AssetSystem;
-import com.inari.firefly.control.ControllerSystem;
+import com.inari.firefly.control.ComponentControllerSystem;
 import com.inari.firefly.entity.EntityPrefabSystem;
 import com.inari.firefly.entity.EntityProvider;
 import com.inari.firefly.entity.EntitySystem;
@@ -26,18 +26,18 @@ public interface GDXConfiguration {
         .put( FFContext.INPUT, GDXInputImpl.class )
         .put( FFContext.LOWER_SYSTEM_FACADE, GDXLowerSystemImpl.class )
         .put( FFContext.ENTITY_PROVIDER, EntityProvider.class )
-        .put( FFContext.Systems.ASSET_SYSTEM, AssetSystem.class )
-        .put( FFContext.Systems.STATE_SYSTEM, StateSystem.class )
-        .put( FFContext.Systems.VIEW_SYSTEM, ViewSystem.class )
-        .put( FFContext.Systems.ENTITY_SYSTEM, EntitySystem.class )
-        .put( FFContext.Systems.ENTITY_PREFAB_SYSTEM, EntityPrefabSystem.class )
-        .put( FFContext.Systems.SPRITE_VIEW_SYSTEM, SpriteViewSystem.class )
-        .put( FFContext.Systems.TILE_GRID_SYSTEM, TileGridSystem.class )
-        .put( FFContext.Systems.MOVEMENT_SYSTEM, MovementSystem.class )
-        .put( FFContext.Systems.ENTITY_CONTROLLER_SYSTEM, ControllerSystem.class )
-        .put( FFContext.Systems.ANIMATION_SYSTEM, AnimationSystem.class )
-        .put( FFContext.Systems.SOUND_SYSTEM, SoundSystem.class )
-        .put( FFContext.Renderer.SPRITE_VIEW_RENDERER, SpriteViewRenderer.class )
-        .put( FFContext.Renderer.TILE_GRID_RENDERER, TileGridRenderer.class );
+        .put( AssetSystem.CONTEXT_KEY, AssetSystem.class )
+        .put( StateSystem.CONTEXT_KEY, StateSystem.class )
+        .put( ViewSystem.CONTEXT_KEY, ViewSystem.class )
+        .put( EntitySystem.CONTEXT_KEY, EntitySystem.class )
+        .put( EntityPrefabSystem.CONTEXT_KEY, EntityPrefabSystem.class )
+        .put( SpriteViewSystem.CONTEXT_KEY, SpriteViewSystem.class )
+        .put( TileGridSystem.CONTEXT_KEY, TileGridSystem.class )
+        .put( MovementSystem.CONTEXT_KEY, MovementSystem.class )
+        .put( ComponentControllerSystem.CONTEXT_KEY, ComponentControllerSystem.class )
+        .put( AnimationSystem.CONTEXT_KEY, AnimationSystem.class )
+        .put( SoundSystem.CONTEXT_KEY, SoundSystem.class )
+        .put( SpriteViewRenderer.CONTEXT_KEY, SpriteViewRenderer.class )
+        .put( TileGridRenderer.CONTEXT_KEY, TileGridRenderer.class );
 
 }
