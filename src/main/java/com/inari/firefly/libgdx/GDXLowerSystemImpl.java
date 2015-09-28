@@ -109,8 +109,7 @@ public final class GDXLowerSystemImpl implements ILowerSystemFacade {
                 }
                 break;
             }
-            case ASSET_DISPOSED: 
-            case ASSET_DELETED: {
+            case ASSET_DISPOSED: {
                 if ( asset.getComponentType() == TextureAsset.class ) {
                     deleteTexture( (TextureAsset) asset );
                 } else if ( asset.getComponentType() == SpriteAsset.class ) {

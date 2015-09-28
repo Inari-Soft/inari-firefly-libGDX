@@ -18,6 +18,8 @@ import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.FFContextImpl.InitMap;
 import com.inari.firefly.system.view.ViewSystem;
 import com.inari.firefly.task.TaskSystem;
+import com.inari.firefly.text.TextRenderer;
+import com.inari.firefly.text.TextSystem;
 
 public interface GDXConfiguration {
     
@@ -40,6 +42,9 @@ public interface GDXConfiguration {
         .put( SoundSystem.CONTEXT_KEY, SoundSystem.class )
         .put( SpriteViewRenderer.CONTEXT_KEY, SpriteViewRenderer.class )
         .put( TileGridRenderer.CONTEXT_KEY, TileGridRenderer.class )
-        .put( TaskSystem.CONTEXT_KEY, TaskSystem.class );
+        .put( TaskSystem.CONTEXT_KEY, TaskSystem.class )
+        .put( TextSystem.CONTEXT_KEY, TextSystem.class )
+        .put( TextRenderer.CONTEXT_KEY, TextRenderer.class )
+        ;
 
 }
