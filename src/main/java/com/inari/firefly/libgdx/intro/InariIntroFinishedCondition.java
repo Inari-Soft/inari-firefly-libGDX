@@ -1,5 +1,7 @@
 package com.inari.firefly.libgdx.intro;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.inari.firefly.animation.AnimationSystem;
 import com.inari.firefly.state.StateChangeCondition;
 import com.inari.firefly.state.Workflow;
@@ -18,6 +20,7 @@ public final class InariIntroFinishedCondition implements StateChangeCondition {
             animationId = animationSystem.getAnimationId( InariIntro.INTRO_ANIMATION );
         }
         
-        return animationSystem.isFinished( animationId );
+        return animationSystem.isFinished( animationId ) && 
+               ( Gdx.input.isKeyPressed( Input.Keys.SPACE ) || Gdx.input.isTouched() || Gdx.input.isButtonPressed( Input.Buttons.LEFT ) );
     }
 }

@@ -68,7 +68,7 @@ public final class InitInariIntroTask extends Task {
                 .getEntityBuilder()
                     .set( ETransform.VIEW_ID, 0 )
                     .set( ETransform.XPOSITION, context.getScreenWidth() / 2 - InariIntro.INTRO_TEX_WIDTH / 2 )
-                    .set( ETransform.XPOSITION, context.getScreenHeight() / 2 - InariIntro.INTRO_TEX_HEIGHT / 2 )
+                    .set( ETransform.YPOSITION, context.getScreenHeight() / 2 - InariIntro.INTRO_TEX_HEIGHT / 2 )
                     .set( ESprite.SPRITE_ID, assetSystem.getAssetTypeKey( InariIntro.INARI_SPRITE_ASSET_KEY ).id )
                     .set( ESprite.TINT_COLOR, new RGBColor( 1f, 1f, 1f, 0f ) )
                     .set( EController.CONTROLLER_IDS, new int[] { 0 } )

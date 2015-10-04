@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015, Andreas Hefti, inarisoft@yahoo.de 
+  * Copyright (c) 2015, Andreas Hefti, inarisoft@yahoo.de 
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,27 +27,33 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
+import com.inari.commons.StringUtils;
 import com.inari.commons.event.IEventDispatcher;
 import com.inari.commons.geom.Position;
 import com.inari.commons.geom.Rectangle;
 import com.inari.commons.graphics.RGBColor;
+import com.inari.commons.lang.TypedKey;
 import com.inari.commons.lang.indexed.Indexer;
 import com.inari.commons.lang.list.DynArray;
 import com.inari.firefly.asset.Asset;
 import com.inari.firefly.asset.event.AssetEvent;
+import com.inari.firefly.filter.IColorFilter;
+import com.inari.firefly.libgdx.filter.ColorFilteredTextureData;
 import com.inari.firefly.renderer.BlendMode;
 import com.inari.firefly.renderer.SpriteRenderable;
 import com.inari.firefly.renderer.TextureAsset;
 import com.inari.firefly.renderer.sprite.SpriteAsset;
 import com.inari.firefly.sound.SoundAsset;
 import com.inari.firefly.system.FFContext;
-import com.inari.firefly.system.ILowerSystemFacade;
+import com.inari.firefly.system.LowerSystemFacade;
 import com.inari.firefly.system.view.View;
 import com.inari.firefly.system.view.event.ViewEvent;
 
-public final class GDXLowerSystemImpl implements ILowerSystemFacade {
+public final class GDXLowerSystemImpl implements LowerSystemFacade {
     
     private final static float FBO_SCALER = 1.5f;
+    
+    private FFContext context;
     
     private final DynArray<Texture> textures;
     private final DynArray<TextureRegion> sprites;
@@ -74,7 +80,7 @@ public final class GDXLowerSystemImpl implements ILowerSystemFacade {
        IEventDispatcher eventDispatcher = context.getComponent( FFContext.EVENT_DISPATCHER );
        eventDispatcher.register( AssetEvent.class, this );
        eventDispatcher.register( ViewEvent.class, this );
-       
+       this.context = context;
         // TODO init sprite batch???
     }
     
@@ -231,7 +237,7 @@ public final class GDXLowerSystemImpl implements ILowerSystemFacade {
     public final void renderSprite( SpriteRenderable spriteRenderable, float xpos, float ypos ) {
         setColorAndBlendMode( spriteRenderable );
         TextureRegion sprite = sprites.get( spriteRenderable.getSpriteId() );
-        spriteBatch.draw( sprite, xpos, xpos );
+        spriteBatch.draw( sprite, xpos, ypos );
     }
     
     @Override
@@ -300,10 +306,23 @@ public final class GDXLowerSystemImpl implements ILowerSystemFacade {
     }
 
     private void createTexture( TextureAsset asset ) {
-        Texture texture = new Texture( asset.getResourceName() );
+        Texture texture = null;
+        String colorFilterName = asset.getDynamicAttribute( GDXConfiguration.DynamicAttributes.TEXTURE_COLOR_FILTER_NAME );
+        if ( !StringUtils.isBlank( colorFilterName ) ) {
+            TypedKey<IColorFilter> filterKey = TypedKey.create( colorFilterName, IColorFilter.class );
+            IColorFilter colorFilter = context.getComponent( filterKey );
+            if ( colorFilter != null ) {
+                ColorFilteredTextureData textureData = new ColorFilteredTextureData( asset.getResourceName(), colorFilter );
+                texture = new Texture( textureData );
+            }
+        } 
+        
+        if ( texture == null ) {
+            texture = new Texture( asset.getResourceName() );
+        }
+        
         asset.setWidth( texture.getWidth() );
         asset.setHeight( texture.getHeight() );
-        // TODO handle with dynamic attributes for Texture
         
         textures.set( asset.index(), texture );
     }
