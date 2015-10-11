@@ -45,6 +45,7 @@ import com.inari.firefly.renderer.TextureAsset;
 import com.inari.firefly.renderer.sprite.SpriteAsset;
 import com.inari.firefly.sound.SoundAsset;
 import com.inari.firefly.system.FFContext;
+import com.inari.firefly.system.FFInitException;
 import com.inari.firefly.system.LowerSystemFacade;
 import com.inari.firefly.system.view.View;
 import com.inari.firefly.system.view.event.ViewEvent;
@@ -63,6 +64,8 @@ public final class GDXLowerSystemImpl implements LowerSystemFacade {
     
     private final SpriteBatch spriteBatch;
     
+    private Viewport baseViewport = null;
+    private View baseView = null;
     private Viewport activeViewport = null;
     private BlendMode currentBlendMode = BlendMode.NONE;
     
@@ -99,6 +102,11 @@ public final class GDXLowerSystemImpl implements LowerSystemFacade {
         sprites.clear();
         textures.clear();
         viewports.clear();
+        
+        if ( baseViewport != null ) {
+            baseViewport.dispose();
+        }
+        baseView = null;
     }
     
     @Override
@@ -207,6 +215,8 @@ public final class GDXLowerSystemImpl implements LowerSystemFacade {
                     viewport = createVirtualViewport( view );
                 } else {
                     viewport = createBaseViewport( view );
+                    baseViewport = viewport;
+                    baseView = view;
                 }
                 viewports.set( viewportId, viewport );
                 break;
@@ -225,12 +235,11 @@ public final class GDXLowerSystemImpl implements LowerSystemFacade {
     @Override
     public final void startRendering( View view ) {
         activeViewport = viewports.get( view.index() );
-        activeViewport.update( spriteBatch, view.getWorldPosition(), view.getZoom(), view.getClearColor() );
+        activeViewport.update( spriteBatch, view );
         if ( !view.isBase() ) {
             activeViewport.fbo.begin();
-        } else {
-            spriteBatch.begin();
-        }
+        } 
+        spriteBatch.begin();
     }
 
     @Override
@@ -253,7 +262,12 @@ public final class GDXLowerSystemImpl implements LowerSystemFacade {
         spriteBatch.setColor( renderColor.r, renderColor.g, renderColor.b, renderColor.a );
         if ( currentBlendMode != blendMode ) {
             currentBlendMode = blendMode;
-            spriteBatch.setBlendFunction( currentBlendMode.gl11SourceConst, currentBlendMode.gl11DestConst );
+            if ( currentBlendMode != BlendMode.NONE ) {
+                spriteBatch.enableBlending();
+                spriteBatch.setBlendFunction( currentBlendMode.gl11SourceConst, currentBlendMode.gl11DestConst );
+            } else {
+                spriteBatch.disableBlending();
+            }
         }
     }
 
@@ -262,9 +276,8 @@ public final class GDXLowerSystemImpl implements LowerSystemFacade {
         spriteBatch.flush();
         if ( !view.isBase() ) {
             activeViewport.fbo.end();
-        } else {
-            spriteBatch.end();
-        }
+        } 
+        spriteBatch.end();
         activeViewport = null;
     }
 
@@ -272,13 +285,14 @@ public final class GDXLowerSystemImpl implements LowerSystemFacade {
     public final void flush( Iterator<View> virtualViews ) {
         if ( virtualViews != null && virtualViews.hasNext() ) {
             
+            baseViewport.update( spriteBatch, baseView );
             spriteBatch.begin();
             
             while ( virtualViews.hasNext() ) {
                 View virtualView = virtualViews.next();
                 Viewport viewport = viewports.get( virtualView.index() );
                 Rectangle bounds = virtualView.getBounds();
-                spriteBatch.draw( viewport.fboTexture, bounds.x, bounds.y );
+                spriteBatch.draw( viewport.fboTexture, bounds.x, bounds.y, bounds.width, bounds.height );
             }
             
             spriteBatch.end();
@@ -298,7 +312,12 @@ public final class GDXLowerSystemImpl implements LowerSystemFacade {
 
     private void createSprite( SpriteAsset asset ) {
         Rectangle textureRegion = asset.getTextureRegion();
-        Texture texture = textures.get( asset.getTextureId() );
+        int textureId = asset.getTextureId();
+        if ( !textures.contains( textureId ) ) {
+            throw new FFInitException( "Texture with id: " + textureId + " for SpriteAsset: " + asset.getName() + " not loaded" );
+        }
+        
+        Texture texture = textures.get( textureId );
         TextureRegion sprite = new TextureRegion( texture, textureRegion.x, textureRegion.y, textureRegion.width, textureRegion.height );
         sprite.flip( false, true );
         
@@ -348,15 +367,18 @@ public final class GDXLowerSystemImpl implements LowerSystemFacade {
                 music.dispose();
             }
         } else {
-            com.badlogic.gdx.audio.Sound sound = sounds.remove( asset.index() );
-            if ( sound != null ) {
-                sound.dispose();
+            if ( sounds.contains( asset.index() ) ) {
+                com.badlogic.gdx.audio.Sound sound = sounds.remove( asset.index() );
+                if ( sound != null ) {
+                    sound.dispose();
+                }
             }
         }
     }
     
     private Viewport createBaseViewport( View view ) {
-        OrthographicCamera camera = new OrthographicCamera( Gdx.graphics.getWidth(), Gdx.graphics.getHeight() );
+        Rectangle bounds = view.getBounds();
+        OrthographicCamera camera = new OrthographicCamera( bounds.width, bounds.height );
         return new Viewport( camera, null, null );
     }
 
@@ -365,7 +387,7 @@ public final class GDXLowerSystemImpl implements LowerSystemFacade {
         OrthographicCamera camera = new OrthographicCamera( bounds.width, bounds.height );
         FrameBuffer frameBuffer = new FrameBuffer( Format.RGB565, (int) ( bounds.width * FBO_SCALER ), (int) ( bounds.height * FBO_SCALER ), false ) ;
         TextureRegion textureRegion = new TextureRegion( frameBuffer.getColorBufferTexture() );
-        textureRegion.flip( false, true );
+        textureRegion.flip( false, false );
         
         return new Viewport( camera, frameBuffer, textureRegion );
     }
@@ -388,8 +410,13 @@ public final class GDXLowerSystemImpl implements LowerSystemFacade {
             }
         }
 
-        final void update( SpriteBatch spriteBatch, Position worldPosition, float zoom, RGBColor clearColor ) {
-            camera.setToOrtho( true, Gdx.graphics.getWidth() * zoom, Gdx.graphics.getHeight() * zoom );
+        final void update( SpriteBatch spriteBatch, View view ) {
+            Position worldPosition = view.getWorldPosition();
+            float zoom = view.getZoom();
+            RGBColor clearColor = view.getClearColor();
+            Rectangle bounds = view.getBounds();
+            
+            camera.setToOrtho( true, bounds.width * zoom, bounds.height * zoom );
             camera.position.x = camera.position.x + worldPosition.x;
             camera.position.y = camera.position.y + worldPosition.y;
             camera.update();

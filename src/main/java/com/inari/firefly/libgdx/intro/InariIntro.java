@@ -7,7 +7,7 @@ import com.inari.firefly.animation.AnimationSystem;
 import com.inari.firefly.app.Callback;
 import com.inari.firefly.asset.AssetNameKey;
 import com.inari.firefly.asset.AssetSystem;
-import com.inari.firefly.control.ComponentControllerSystem;
+import com.inari.firefly.control.ControllerSystem;
 import com.inari.firefly.entity.EntitySystem;
 import com.inari.firefly.state.State;
 import com.inari.firefly.state.StateChange;
@@ -39,7 +39,6 @@ public final class InariIntro implements Loadable, Disposable {
     static final int INTRO_TEX_HEIGHT = 278;
     
     private final Callback callback;
-    private Disposable disposable;
 
     public InariIntro( Callback callback ) {
         this.callback = callback;
@@ -51,8 +50,10 @@ public final class InariIntro implements Loadable, Disposable {
         TaskSystem taskSystem = context.getComponent( TaskSystem.CONTEXT_KEY );
         
         taskSystem.getTaskBuilder( InitInariIntroTask.class )
-            .set( Task.NAME, INTRO_START_TASK )
-            .set( Task.REMOVE_AFTER_RUN, true )
+            .set( 
+                Task.NAME.value( INTRO_START_TASK ),
+                Task.REMOVE_AFTER_RUN.value( true ) 
+            )
         .buildAndNext( DisposeInariIntroTask.class )
             .set( Task.NAME, INTRO_END_TASK )
             .set( Task.REMOVE_AFTER_RUN, true )
@@ -71,44 +72,36 @@ public final class InariIntro implements Loadable, Disposable {
         .build();
         
         stateSystem.getStateChangeBuilder()
-            .set( StateChange.NAME, INTRO_STATE_CHANGE )
-            .set( StateChange.WORKFLOW_ID, workflow.getId() )
-            .set( StateChange.FORM_STATE_ID, stateSystem.getStateId( INTRO_START_STATE ) )
-            .set( StateChange.CONDITION_TYPE_NAME, InariIntroFinishedCondition.class.getName() )
-            .set( StateChange.TASK_ID, taskSystem.getTaskId( INTRO_END_TASK ) )
+            .set( 
+                StateChange.NAME.value( INTRO_STATE_CHANGE ),
+                StateChange.WORKFLOW_ID.value( workflow.getId() ),
+                StateChange.FORM_STATE_ID.value( stateSystem.getStateId( INTRO_START_STATE ) ),
+                StateChange.CONDITION_TYPE_NAME.value( InariIntroFinishedCondition.class.getName() ),
+                StateChange.TASK_ID.value( taskSystem.getTaskId( INTRO_END_TASK ) )
+            )
         .build();
-        
-        disposable = new Disposable() {
-
-            @Override
-            public void dispose( FFContext context ) {
-                AssetSystem assetSystem = context.getComponent( AssetSystem.CONTEXT_KEY );
-                EntitySystem entitySystem = context.getComponent( EntitySystem.CONTEXT_KEY );
-                StateSystem stateSystem = context.getComponent( StateSystem.CONTEXT_KEY );
-                TaskSystem taskSystem = context.getComponent( TaskSystem.CONTEXT_KEY );
-                AnimationSystem animationSystem = context.getComponent( AnimationSystem.CONTEXT_KEY );
-                ComponentControllerSystem controllerSystem = context.getComponent( ComponentControllerSystem.CONTEXT_KEY );
-                
-                entitySystem.deleteAll();
-                assetSystem.deleteAssets( INTRO_NAME );
-                stateSystem.clear();
-                taskSystem.clear();
-                animationSystem.clear();
-                controllerSystem.clear();
-            }
-            
-        };
         
         stateSystem.activateWorkflow( workflow.getId() );
         
-        return disposable;
+        return this;
     }
 
     @Override
     public final void dispose( FFContext context ) {
-        if ( disposable != null ) {
-            disposable.dispose( context );
-        }
+        AssetSystem assetSystem = context.getComponent( AssetSystem.CONTEXT_KEY );
+        EntitySystem entitySystem = context.getComponent( EntitySystem.CONTEXT_KEY );
+        StateSystem stateSystem = context.getComponent( StateSystem.CONTEXT_KEY );
+        TaskSystem taskSystem = context.getComponent( TaskSystem.CONTEXT_KEY );
+        AnimationSystem animationSystem = context.getComponent( AnimationSystem.CONTEXT_KEY );
+        ControllerSystem controllerSystem = context.getComponent( ControllerSystem.CONTEXT_KEY );
+        
+        entitySystem.deleteAll();
+        assetSystem.deleteAssets( INTRO_NAME );
+        stateSystem.clear();
+        taskSystem.clear();
+        animationSystem.clear();
+        controllerSystem.clear();
+        
         callback.callback( context );
     }
 

@@ -12,7 +12,7 @@ public abstract class GDXFFTestAdapter extends ApplicationAdapter {
     @Override
     public final void create () {
         Gdx.graphics.setTitle( getTitle() );
-        firefly = new FireFly( GDXConfiguration.GDX_INIT_MAP );
+        firefly = new FireFly( GDXConfiguration.getInitMap() );
         FFContext context = firefly.getContext();
         initTest( context );
     }

@@ -7,6 +7,7 @@ import com.inari.firefly.app.FFApplicationManager;
 import com.inari.firefly.component.dynattr.DynamicAttribueMapper;
 import com.inari.firefly.libgdx.intro.InariIntro;
 import com.inari.firefly.system.FFContext;
+import com.inari.firefly.system.FFContextImpl.InitMap;
 import com.inari.firefly.system.FireFly;
 
 public abstract class GDXFFApplicationAdapter extends ApplicationAdapter implements Callback {
@@ -17,7 +18,11 @@ public abstract class GDXFFApplicationAdapter extends ApplicationAdapter impleme
     @Override
     public final void create () {
         Gdx.graphics.setTitle( getTitle() );
-        firefly = new FireFly( GDXConfiguration.GDX_INIT_MAP );
+        InitMap initMap = getInitMap();
+        if ( initMap == null ) {
+            initMap = GDXConfiguration.getInitMap();
+        }
+        firefly = new FireFly( initMap );
         FFContext context = firefly.getContext();
         
         createGDXSpecificDynamicAttribute();
@@ -41,11 +46,13 @@ public abstract class GDXFFApplicationAdapter extends ApplicationAdapter impleme
     
     public abstract String getTitle();
     protected abstract FFApplicationManager getApplicationManager();
+    protected abstract InitMap getInitMap();
 
     /** This is the callback from InariIntro called when the intro has finished and disposed.
      */
     @Override
     public final void callback( FFContext context ) {
+        context.putComponent( InariIntro.CONTEXT_KEY, null );
         if ( applicationManager != null ) {
             applicationManager.init( context );
         } else {
@@ -77,7 +84,8 @@ public abstract class GDXFFApplicationAdapter extends ApplicationAdapter impleme
         if ( applicationManager != null ) {
             applicationManager.dispose( firefly.getContext() );
         }
-        Gdx.app.exit();
+        
+        firefly.dispose();
     }
 
 }

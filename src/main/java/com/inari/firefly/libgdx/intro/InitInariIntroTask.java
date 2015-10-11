@@ -7,7 +7,7 @@ import com.inari.firefly.animation.AnimationSystem;
 import com.inari.firefly.animation.ColorEasingAnimation;
 import com.inari.firefly.animation.EasingData;
 import com.inari.firefly.asset.AssetSystem;
-import com.inari.firefly.control.ComponentControllerSystem;
+import com.inari.firefly.control.ControllerSystem;
 import com.inari.firefly.control.EController;
 import com.inari.firefly.controller.SpriteTintColorAnimationController;
 import com.inari.firefly.entity.ETransform;
@@ -32,7 +32,7 @@ public final class InitInariIntroTask extends Task {
         AssetSystem assetSystem = context.getComponent( AssetSystem.CONTEXT_KEY );
         EntitySystem entitySystem = context.getComponent( EntitySystem.CONTEXT_KEY );
         AnimationSystem animationSystem = context.getComponent( AnimationSystem.CONTEXT_KEY );
-        ComponentControllerSystem controllerSystem = context.getComponent( ComponentControllerSystem.CONTEXT_KEY );
+        ControllerSystem controllerSystem = context.getComponent( ControllerSystem.CONTEXT_KEY );
         
         animationSystem
             .getAnimationBuilder( ColorEasingAnimation.class )

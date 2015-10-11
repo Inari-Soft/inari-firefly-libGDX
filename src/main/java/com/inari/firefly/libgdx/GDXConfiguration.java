@@ -1,10 +1,11 @@
 package com.inari.firefly.libgdx;
 
 import com.inari.commons.event.EventDispatcher;
+import com.inari.firefly.action.ActionSystem;
 import com.inari.firefly.animation.AnimationSystem;
 import com.inari.firefly.asset.AssetSystem;
 import com.inari.firefly.component.attr.AttributeKey;
-import com.inari.firefly.control.ComponentControllerSystem;
+import com.inari.firefly.control.ControllerSystem;
 import com.inari.firefly.entity.EntityPrefabSystem;
 import com.inari.firefly.entity.EntityProvider;
 import com.inari.firefly.entity.EntitySystem;
@@ -24,18 +25,20 @@ import com.inari.firefly.task.TaskSystem;
 import com.inari.firefly.text.TextRenderer;
 import com.inari.firefly.text.TextSystem;
 
-public interface GDXConfiguration {
+public abstract class GDXConfiguration {
     
     public interface DynamicAttributes {
-        public static final AttributeKey<String> TEXTURE_COLOR_FILTER_NAME = new AttributeKey<String>( "textureColorFilterName", String.class, TextureAsset.class );
+        public static final AttributeKey<String> TEXTURE_COLOR_FILTER_NAME = new AttributeKey<String>( "TEXTURE_COLOR_FILTER_NAME", String.class, TextureAsset.class );
     }
     
-    public final static InitMap GDX_INIT_MAP = new InitMap()
+    public static final InitMap getInitMap() {
+        return new InitMap()
         .put( FFContext.EVENT_DISPATCHER, EventDispatcher.class )
         .put( FFContext.TIMER, GDXTimerImpl.class )
         .put( FFContext.INPUT, GDXInputImpl.class )
         .put( FFContext.LOWER_SYSTEM_FACADE, GDXLowerSystemImpl.class )
         .put( FFContext.ENTITY_PROVIDER, EntityProvider.class )
+        .put( ActionSystem.CONTEXT_KEY, ActionSystem.class )
         .put( AssetSystem.CONTEXT_KEY, AssetSystem.class )
         .put( StateSystem.CONTEXT_KEY, StateSystem.class )
         .put( ViewSystem.CONTEXT_KEY, ViewSystem.class )
@@ -44,7 +47,7 @@ public interface GDXConfiguration {
         .put( SpriteViewSystem.CONTEXT_KEY, SpriteViewSystem.class )
         .put( TileGridSystem.CONTEXT_KEY, TileGridSystem.class )
         .put( MovementSystem.CONTEXT_KEY, MovementSystem.class )
-        .put( ComponentControllerSystem.CONTEXT_KEY, ComponentControllerSystem.class )
+        .put( ControllerSystem.CONTEXT_KEY, ControllerSystem.class )
         .put( AnimationSystem.CONTEXT_KEY, AnimationSystem.class )
         .put( SoundSystem.CONTEXT_KEY, SoundSystem.class )
         .put( SpriteViewRenderer.CONTEXT_KEY, SpriteViewRenderer.class )
@@ -54,5 +57,7 @@ public interface GDXConfiguration {
         .put( TextRenderer.CONTEXT_KEY, TextRenderer.class )
         .put( SceneSystem.CONTEXT_KEY, SceneSystem.class )
         ;
+
+    }
 
 }
