@@ -61,7 +61,7 @@ public final class GDXLowerSystemImpl implements LowerSystemFacade {
     private final DynArray<TextureRegion> sprites;
     private final DynArray<Viewport> viewports;
     private final DynArray<com.badlogic.gdx.audio.Sound> sounds;
-    private final IntMap lastPlayingSoundOnChanel;
+    private final IntMap lastPlayingSoundOnChannel;
     private final DynArray<Music> music;
     
     private final SpriteBatch spriteBatch;
@@ -76,7 +76,7 @@ public final class GDXLowerSystemImpl implements LowerSystemFacade {
         sprites = new DynArray<TextureRegion>( Indexer.getIndexedObjectSize( SpriteAsset.class ) );
         viewports = new DynArray<Viewport>( Indexer.getIndexedObjectSize( View.class ) );
         sounds = new DynArray<com.badlogic.gdx.audio.Sound>();
-        lastPlayingSoundOnChanel = new IntMap( -1, 5 );
+        lastPlayingSoundOnChannel = new IntMap( -1, 5 );
         music = new DynArray<Music>();
         spriteBatch = new SpriteBatch();
     }
@@ -143,17 +143,17 @@ public final class GDXLowerSystemImpl implements LowerSystemFacade {
     
 
     @Override
-    public final long playSound( int soundId, int chanel, boolean looping, float volume, float pitch, float pan ) {
+    public final long playSound( int soundId, int channel, boolean looping, float volume, float pitch, float pan ) {
         Sound sound = sounds.get( soundId );
         if ( sound == null ) {
             return -1;
         }
         
-        int lastPlayedSoundId = lastPlayingSoundOnChanel.get( chanel );
+        int lastPlayedSoundId = lastPlayingSoundOnChannel.get( channel );
         if ( lastPlayedSoundId >= 0 ) {
             sounds.get( lastPlayedSoundId ).stop();
         }
-        lastPlayingSoundOnChanel.set( chanel, soundId );
+        lastPlayingSoundOnChannel.set( channel, soundId );
         
         long play = sound.play( volume, pitch, pan );
         if ( looping ) {
