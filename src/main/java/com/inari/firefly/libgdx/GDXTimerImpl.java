@@ -14,7 +14,6 @@ public class GDXTimerImpl extends FFTimer {
             time += timeElapsed;
             timeElapsed = currentTime - lastUpdateTime;
             lastUpdateTime = currentTime;
-            
         }
     }
 
