@@ -9,7 +9,7 @@ import com.inari.firefly.animation.EasingData;
 import com.inari.firefly.asset.AssetSystem;
 import com.inari.firefly.control.ControllerSystem;
 import com.inari.firefly.control.EController;
-import com.inari.firefly.controller.SpriteTintColorAnimationController;
+import com.inari.firefly.controller.entity.SpriteTintColorAnimationController;
 import com.inari.firefly.entity.ETransform;
 import com.inari.firefly.entity.Entity;
 import com.inari.firefly.entity.EntitySystem;

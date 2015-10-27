@@ -18,7 +18,7 @@ public abstract class FilteredTextureData implements TextureData {
     int height = 0;
     Format format;
     Pixmap pixmap;
-    boolean useMipMaps;
+    boolean useMipMaps = true;
     boolean isPrepared = false;
     
     public FilteredTextureData( String resourcePath ) {
@@ -26,14 +26,13 @@ public abstract class FilteredTextureData implements TextureData {
     }
     
     public FilteredTextureData( FileHandle file ) {
-        this( file, new Pixmap( file ), null, false );
+        this( file, new Pixmap( file ), null );
     }
 
-    public FilteredTextureData (FileHandle file, Pixmap preloadedPixmap, Format format, boolean useMipMaps) {
+    public FilteredTextureData ( FileHandle file, Pixmap preloadedPixmap, Format format ) {
         this.file = file;
         this.pixmap = preloadedPixmap;
         this.format = format;
-        this.useMipMaps = useMipMaps;
         if (pixmap != null) {
             pixmap = ensurePot(pixmap);
             width = pixmap.getWidth();

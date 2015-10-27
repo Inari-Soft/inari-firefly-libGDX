@@ -53,7 +53,7 @@ import com.inari.firefly.system.view.event.ViewEvent;
 
 public final class GDXLowerSystemImpl implements LowerSystemFacade {
     
-    private final static float FBO_SCALER = 1.5f;
+    private final static float FBO_SCALER = 2f;
     
     private FFContext context;
     
@@ -257,21 +257,19 @@ public final class GDXLowerSystemImpl implements LowerSystemFacade {
 
     @Override
     public final void renderSprite( SpriteRenderable spriteRenderable, float xpos, float ypos ) {
-        setColorAndBlendMode( spriteRenderable );
+        setColorAndBlendMode( spriteRenderable.getTintColor(), spriteRenderable.getBlendMode() );
         TextureRegion sprite = sprites.get( spriteRenderable.getSpriteId() );
         spriteBatch.draw( sprite, xpos, ypos );
     }
     
     @Override
     public void renderSprite( SpriteRenderable spriteRenderable, float x, float y, float pivotx, float pivoty, float scalex, float scaley,float rotation ) {
-        setColorAndBlendMode( spriteRenderable );
+        setColorAndBlendMode( spriteRenderable.getTintColor(), spriteRenderable.getBlendMode() );
         TextureRegion sprite = sprites.get( spriteRenderable.getSpriteId() );
         spriteBatch.draw( sprite, x, y, pivotx, pivoty, sprite.getRegionWidth(), sprite.getRegionHeight(), scalex, scaley, rotation );
     }
 
-    private void setColorAndBlendMode( SpriteRenderable sprite ) {
-        RGBColor renderColor = sprite.getTintColor();
-        BlendMode blendMode = sprite.getBlendMode();
+    private void setColorAndBlendMode( RGBColor renderColor, BlendMode blendMode ) {
         spriteBatch.setColor( renderColor.r, renderColor.g, renderColor.b, renderColor.a );
         if ( currentBlendMode != blendMode ) {
             currentBlendMode = blendMode;
@@ -305,6 +303,7 @@ public final class GDXLowerSystemImpl implements LowerSystemFacade {
                 View virtualView = virtualViews.next();
                 Viewport viewport = viewports.get( virtualView.index() );
                 Rectangle bounds = virtualView.getBounds();
+                setColorAndBlendMode( virtualView.getTintColor(), virtualView.getBlendMode() );
                 spriteBatch.draw( viewport.fboTexture, bounds.x, bounds.y, bounds.width, bounds.height );
             }
             
