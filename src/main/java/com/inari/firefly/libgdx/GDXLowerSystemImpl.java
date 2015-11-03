@@ -150,7 +150,7 @@ public final class GDXLowerSystemImpl implements LowerSystemFacade {
         }
         
         int lastPlayedSoundId = lastPlayingSoundOnChannel.get( channel );
-        if ( lastPlayedSoundId >= 0 ) {
+        if ( lastPlayedSoundId >= 0 && sounds.contains( lastPlayedSoundId ) ) {
             sounds.get( lastPlayedSoundId ).stop();
         }
         lastPlayingSoundOnChannel.set( channel, soundId );
@@ -362,12 +362,12 @@ public final class GDXLowerSystemImpl implements LowerSystemFacade {
         if ( asset.isStreaming() ) {
             music.set( 
                 asset.index(), 
-                Gdx.audio.newMusic( Gdx.files.internal( asset.getResourceName() ) ) 
+                Gdx.audio.newMusic( Gdx.files.classpath( asset.getResourceName() ) ) 
             );
         } else {
             sounds.set( 
                 asset.index(), 
-                Gdx.audio.newSound( Gdx.files.internal( asset.getResourceName() ) ) 
+                Gdx.audio.newSound( Gdx.files.classpath( asset.getResourceName() ) ) 
             );
         }
     }
