@@ -1,10 +1,10 @@
 package com.inari.firefly.libgdx.intro;
 
 import com.inari.commons.lang.TypedKey;
+import com.inari.firefly.Callback;
 import com.inari.firefly.Disposable;
 import com.inari.firefly.Loadable;
 import com.inari.firefly.animation.AnimationSystem;
-import com.inari.firefly.app.Callback;
 import com.inari.firefly.asset.AssetNameKey;
 import com.inari.firefly.asset.AssetSystem;
 import com.inari.firefly.control.ControllerSystem;
