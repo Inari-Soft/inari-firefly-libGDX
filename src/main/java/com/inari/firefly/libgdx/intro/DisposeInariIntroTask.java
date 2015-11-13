@@ -11,7 +11,9 @@ public final class DisposeInariIntroTask extends Task {
 
     @Override
     public final void run( FFContext context ) {
-        context.getComponent( InariIntro.CONTEXT_KEY ).dispose( context );
+        InariIntro inariIntro = context.getComponent( InariIntro.CONTEXT_KEY );
+        inariIntro.dispose( context );
+        context.putComponent( InariIntro.CONTEXT_KEY, null );
     }
     
 }

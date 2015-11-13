@@ -349,7 +349,7 @@ public final class GDXLowerSystemImpl implements LowerSystemFacade {
         } 
         
         if ( texture == null ) {
-            texture = new Texture( asset.getResourceName() );
+            texture = new Texture( Gdx.files.internal( asset.getResourceName() ) );
         }
         
         asset.setWidth( texture.getWidth() );
