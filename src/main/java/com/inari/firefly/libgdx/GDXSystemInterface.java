@@ -47,11 +47,11 @@ import com.inari.firefly.renderer.sprite.SpriteAsset;
 import com.inari.firefly.sound.SoundAsset;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.FFInitException;
-import com.inari.firefly.system.LowerSystemFacade;
+import com.inari.firefly.system.FFSystemInterface;
 import com.inari.firefly.system.view.View;
 import com.inari.firefly.system.view.event.ViewEvent;
 
-public final class GDXLowerSystemImpl implements LowerSystemFacade {
+public final class GDXSystemInterface implements FFSystemInterface {
     
     private final static float FBO_SCALER = 2f;
     
@@ -71,7 +71,7 @@ public final class GDXLowerSystemImpl implements LowerSystemFacade {
     private Viewport activeViewport = null;
     private BlendMode currentBlendMode = BlendMode.NONE;
     
-    GDXLowerSystemImpl() {
+    GDXSystemInterface() {
         textures = new DynArray<Texture>( Indexer.getIndexedObjectSize( TextureAsset.class ) );
         sprites = new DynArray<TextureRegion>( Indexer.getIndexedObjectSize( SpriteAsset.class ) );
         viewports = new DynArray<Viewport>( Indexer.getIndexedObjectSize( View.class ) );

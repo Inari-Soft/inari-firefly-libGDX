@@ -36,7 +36,7 @@ public abstract class GDXConfiguration {
         .put( FFContext.EVENT_DISPATCHER, EventDispatcher.class )
         .put( FFContext.TIMER, GDXTimerImpl.class )
         .put( FFContext.INPUT, GDXInputImpl.class )
-        .put( FFContext.LOWER_SYSTEM_FACADE, GDXLowerSystemImpl.class )
+        .put( FFContext.LOWER_SYSTEM_FACADE, GDXSystemInterface.class )
         .put( FFContext.ENTITY_PROVIDER, EntityProvider.class )
         .put( ActionSystem.CONTEXT_KEY, ActionSystem.class )
         .put( AssetSystem.CONTEXT_KEY, AssetSystem.class )
