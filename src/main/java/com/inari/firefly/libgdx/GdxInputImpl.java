@@ -5,7 +5,7 @@ import com.inari.commons.lang.list.DynArray;
 import com.inari.commons.lang.list.IntMap;
 import com.inari.firefly.system.Input;
 
-public class GDXInputImpl extends Input {
+public class GdxInputImpl extends Input {
     
     private IntMap buttonCodeMapping = new IntMap( -1, 255 );
     private DynArray<InputType> inputTypeMapping = new DynArray<InputType>();

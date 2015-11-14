@@ -13,7 +13,7 @@ import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.FFContextImpl.InitMap;
 import com.inari.firefly.system.FireFly;
 
-public abstract class GDXFFApplicationAdapter extends ApplicationAdapter implements Callback {
+public abstract class GdxFFApplicationAdapter extends ApplicationAdapter implements Callback {
 
     private FireFly firefly;
     
@@ -22,7 +22,7 @@ public abstract class GDXFFApplicationAdapter extends ApplicationAdapter impleme
         Gdx.graphics.setTitle( getTitle() );
         InitMap initMap = getInitMap();
         if ( initMap == null ) {
-            initMap = GDXConfiguration.getInitMap();
+            initMap = GdxConfiguration.getInitMap();
         }
         firefly = new FireFly( initMap );
         FFContext context = firefly.getContext();
@@ -40,7 +40,7 @@ public abstract class GDXFFApplicationAdapter extends ApplicationAdapter impleme
     }
     
     protected InitMap getInitMap() {
-        return GDXConfiguration.getInitMap();
+        return GdxConfiguration.getInitMap();
     }
     
     protected Collection<AttributeKey<?>> getDynamicAttributes() {

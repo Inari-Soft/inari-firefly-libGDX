@@ -3,7 +3,7 @@ package com.inari.firefly.libgdx;
 import com.badlogic.gdx.utils.TimeUtils;
 import com.inari.firefly.system.FFTimer;
 
-public class GDXTimerImpl extends FFTimer {
+public class GdxTimerImpl extends FFTimer {
 
     @Override
     protected void tick() {

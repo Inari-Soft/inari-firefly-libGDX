@@ -5,14 +5,14 @@ import com.badlogic.gdx.Gdx;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.FireFly;
 
-public abstract class GDXFFTestAdapter extends ApplicationAdapter {
+public abstract class GdxFFTestAdapter extends ApplicationAdapter {
     
     private FireFly firefly;
     
     @Override
     public final void create () {
         Gdx.graphics.setTitle( getTitle() );
-        firefly = new FireFly( GDXConfiguration.getInitMap() );
+        firefly = new FireFly( GdxConfiguration.getInitMap() );
         FFContext context = firefly.getContext();
         initTest( context );
     }

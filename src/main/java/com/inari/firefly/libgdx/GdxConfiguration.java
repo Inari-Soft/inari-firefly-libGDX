@@ -25,7 +25,7 @@ import com.inari.firefly.task.TaskSystem;
 import com.inari.firefly.text.TextRenderer;
 import com.inari.firefly.text.TextSystem;
 
-public abstract class GDXConfiguration {
+public abstract class GdxConfiguration {
     
     public interface DynamicAttributes {
         public static final AttributeKey<String> TEXTURE_COLOR_FILTER_NAME = new AttributeKey<String>( "TEXTURE_COLOR_FILTER_NAME", String.class, TextureAsset.class );
@@ -34,9 +34,9 @@ public abstract class GDXConfiguration {
     public static final InitMap getInitMap() {
         return new InitMap()
         .put( FFContext.EVENT_DISPATCHER, EventDispatcher.class )
-        .put( FFContext.TIMER, GDXTimerImpl.class )
-        .put( FFContext.INPUT, GDXInputImpl.class )
-        .put( FFContext.LOWER_SYSTEM_FACADE, GDXSystemInterface.class )
+        .put( FFContext.TIMER, GdxTimerImpl.class )
+        .put( FFContext.INPUT, GdxInputImpl.class )
+        .put( FFContext.LOWER_SYSTEM_FACADE, GdxSystemInterface.class )
         .put( FFContext.ENTITY_PROVIDER, EntityProvider.class )
         .put( ActionSystem.CONTEXT_KEY, ActionSystem.class )
         .put( AssetSystem.CONTEXT_KEY, AssetSystem.class )

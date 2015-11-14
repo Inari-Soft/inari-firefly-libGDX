@@ -51,7 +51,7 @@ import com.inari.firefly.system.FFSystemInterface;
 import com.inari.firefly.system.view.View;
 import com.inari.firefly.system.view.event.ViewEvent;
 
-public final class GDXSystemInterface implements FFSystemInterface {
+public final class GdxSystemInterface implements FFSystemInterface {
     
     private final static float FBO_SCALER = 2f;
     
@@ -71,7 +71,7 @@ public final class GDXSystemInterface implements FFSystemInterface {
     private Viewport activeViewport = null;
     private BlendMode currentBlendMode = BlendMode.NONE;
     
-    GDXSystemInterface() {
+    GdxSystemInterface() {
         textures = new DynArray<Texture>( Indexer.getIndexedObjectSize( TextureAsset.class ) );
         sprites = new DynArray<TextureRegion>( Indexer.getIndexedObjectSize( SpriteAsset.class ) );
         viewports = new DynArray<Viewport>( Indexer.getIndexedObjectSize( View.class ) );
@@ -338,7 +338,7 @@ public final class GDXSystemInterface implements FFSystemInterface {
 
     private void createTexture( TextureAsset asset ) {
         Texture texture = null;
-        String colorFilterName = asset.getDynamicAttribute( GDXConfiguration.DynamicAttributes.TEXTURE_COLOR_FILTER_NAME );
+        String colorFilterName = asset.getDynamicAttribute( GdxConfiguration.DynamicAttributes.TEXTURE_COLOR_FILTER_NAME );
         if ( !StringUtils.isBlank( colorFilterName ) ) {
             TypedKey<IColorFilter> filterKey = TypedKey.create( colorFilterName, IColorFilter.class );
             IColorFilter colorFilter = context.getComponent( filterKey );
