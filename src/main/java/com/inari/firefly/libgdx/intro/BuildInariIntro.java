@@ -1,14 +1,6 @@
 package com.inari.firefly.libgdx.intro;
 
-import com.inari.commons.lang.TypedKey;
-import com.inari.firefly.Callback;
-import com.inari.firefly.Disposable;
-import com.inari.firefly.Loadable;
-import com.inari.firefly.animation.AnimationSystem;
 import com.inari.firefly.asset.AssetNameKey;
-import com.inari.firefly.asset.AssetSystem;
-import com.inari.firefly.control.ControllerSystem;
-import com.inari.firefly.entity.EntitySystem;
 import com.inari.firefly.state.State;
 import com.inari.firefly.state.StateChange;
 import com.inari.firefly.state.StateSystem;
@@ -17,12 +9,9 @@ import com.inari.firefly.system.FFContext;
 import com.inari.firefly.task.Task;
 import com.inari.firefly.task.TaskSystem;
 
-public final class InariIntro implements Loadable, Disposable {
+public class BuildInariIntro extends Task {
     
-    public static final TypedKey<InariIntro> CONTEXT_KEY = TypedKey.create( "InariIntro", InariIntro.class );
-    
-    static final String INTRO_NAME = "intro";
-    
+    public static final String INTRO_NAME = "intro";
     static final String INARI_LOGO_RESOURCE_PATH = "firefly/inari.png";
     static final AssetNameKey INARI_ASSET_KEY = new AssetNameKey( INTRO_NAME, "inari" );
     static final AssetNameKey INARI_SPRITE_ASSET_KEY = new AssetNameKey( INTRO_NAME, "inariSprite" );
@@ -37,72 +26,49 @@ public final class InariIntro implements Loadable, Disposable {
     
     static final int INTRO_TEX_WIDTH = 385;
     static final int INTRO_TEX_HEIGHT = 278;
-    
-    private final Callback callback;
 
-    public InariIntro( Callback callback ) {
-        this.callback = callback;
+    protected BuildInariIntro( int id ) {
+        super( id );
     }
 
     @Override
-    public final Disposable load( FFContext context ) {
-        StateSystem stateSystem = context.getComponent( StateSystem.CONTEXT_KEY );
-        TaskSystem taskSystem = context.getComponent( TaskSystem.CONTEXT_KEY );
+    public void run( FFContext context ) {
+        StateSystem stateSystem = context.getSystem( StateSystem.CONTEXT_KEY );
+        TaskSystem taskSystem = context.getSystem( TaskSystem.CONTEXT_KEY );
         
-        taskSystem.getTaskBuilder( InitInariIntroTask.class )
+        taskSystem.getTaskBuilder()
             .set( 
                 Task.NAME.value( INTRO_START_TASK ),
                 Task.REMOVE_AFTER_RUN.value( true ) 
             )
-        .buildAndNext( DisposeInariIntroTask.class )
+        .buildAndNext( InitInariIntro.class )
             .set( Task.NAME, INTRO_END_TASK )
             .set( Task.REMOVE_AFTER_RUN, true )
-        .build();
+        .build( DisposeInariIntro.class );
             
         
-        Workflow workflow = stateSystem.getWorkflowBuilder()
+        int workflowId = stateSystem.getWorkflowBuilder()
             .set( Workflow.NAME, INTRO_WORKFLOW )
             .set( Workflow.START_STATE_NAME, INTRO_START_STATE )
             .set( Workflow.INIT_TASK_ID, taskSystem.getTaskId( INTRO_START_TASK ) )
         .build();
                 
         stateSystem.getStateBuilder()
-            .set( State.WORKFLOW_ID, workflow.getId() )
+            .set( State.WORKFLOW_ID, workflowId )
             .set( State.NAME, INTRO_START_STATE )
         .build();
         
         stateSystem.getStateChangeBuilder()
             .set( 
                 StateChange.NAME.value( INTRO_STATE_CHANGE ),
-                StateChange.WORKFLOW_ID.value( workflow.getId() ),
+                StateChange.WORKFLOW_ID.value( workflowId ),
                 StateChange.FORM_STATE_ID.value( stateSystem.getStateId( INTRO_START_STATE ) ),
                 StateChange.CONDITION_TYPE_NAME.value( InariIntroFinishedCondition.class.getName() ),
                 StateChange.TASK_ID.value( taskSystem.getTaskId( INTRO_END_TASK ) )
             )
         .build();
         
-        stateSystem.activateWorkflow( workflow.getId() );
-        
-        return this;
-    }
-
-    @Override
-    public final void dispose( FFContext context ) {
-        AssetSystem assetSystem = context.getComponent( AssetSystem.CONTEXT_KEY );
-        EntitySystem entitySystem = context.getComponent( EntitySystem.CONTEXT_KEY );
-        StateSystem stateSystem = context.getComponent( StateSystem.CONTEXT_KEY );
-        TaskSystem taskSystem = context.getComponent( TaskSystem.CONTEXT_KEY );
-        AnimationSystem animationSystem = context.getComponent( AnimationSystem.CONTEXT_KEY );
-        ControllerSystem controllerSystem = context.getComponent( ControllerSystem.CONTEXT_KEY );
-        
-        entitySystem.deleteAll();
-        assetSystem.deleteAssets( INTRO_NAME );
-        stateSystem.clear();
-        taskSystem.clear();
-        animationSystem.clear();
-        controllerSystem.clear();
-        
-        callback.callback( context );
+        stateSystem.activateWorkflow( workflowId );
     }
 
 }

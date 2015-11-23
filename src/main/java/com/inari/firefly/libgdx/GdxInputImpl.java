@@ -2,12 +2,12 @@ package com.inari.firefly.libgdx;
 
 import com.badlogic.gdx.Gdx;
 import com.inari.commons.lang.list.DynArray;
-import com.inari.commons.lang.list.IntMap;
+import com.inari.commons.lang.list.IntBag;
 import com.inari.firefly.system.Input;
 
 public class GdxInputImpl extends Input {
     
-    private IntMap buttonCodeMapping = new IntMap( -1, 255 );
+    private IntBag buttonCodeMapping = new IntBag( 255, -1 );
     private DynArray<InputType> inputTypeMapping = new DynArray<InputType>();
 
     @Override

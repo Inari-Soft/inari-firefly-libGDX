@@ -28,14 +28,13 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.inari.commons.StringUtils;
-import com.inari.commons.event.IEventDispatcher;
 import com.inari.commons.geom.Position;
 import com.inari.commons.geom.Rectangle;
 import com.inari.commons.graphics.RGBColor;
 import com.inari.commons.lang.TypedKey;
 import com.inari.commons.lang.indexed.Indexer;
 import com.inari.commons.lang.list.DynArray;
-import com.inari.commons.lang.list.IntMap;
+import com.inari.commons.lang.list.IntBag;
 import com.inari.firefly.asset.Asset;
 import com.inari.firefly.asset.event.AssetEvent;
 import com.inari.firefly.filter.IColorFilter;
@@ -61,7 +60,7 @@ public final class GdxSystemInterface implements FFSystemInterface {
     private final DynArray<TextureRegion> sprites;
     private final DynArray<Viewport> viewports;
     private final DynArray<com.badlogic.gdx.audio.Sound> sounds;
-    private final IntMap lastPlayingSoundOnChannel;
+    private final IntBag lastPlayingSoundOnChannel;
     private final DynArray<Music> music;
     
     private final SpriteBatch spriteBatch;
@@ -76,25 +75,23 @@ public final class GdxSystemInterface implements FFSystemInterface {
         sprites = new DynArray<TextureRegion>( Indexer.getIndexedObjectSize( SpriteAsset.class ) );
         viewports = new DynArray<Viewport>( Indexer.getIndexedObjectSize( View.class ) );
         sounds = new DynArray<com.badlogic.gdx.audio.Sound>();
-        lastPlayingSoundOnChannel = new IntMap( -1, 5 );
+        lastPlayingSoundOnChannel = new IntBag( 5, -1 );
         music = new DynArray<Music>();
         spriteBatch = new SpriteBatch();
     }
     
     @Override
     public void init( FFContext context ) {
-       IEventDispatcher eventDispatcher = context.getComponent( FFContext.EVENT_DISPATCHER );
-       eventDispatcher.register( AssetEvent.class, this );
-       eventDispatcher.register( ViewEvent.class, this );
-       this.context = context;
-        // TODO init sprite batch???
+        this.context = context;
+        
+       context.registerListener( AssetEvent.class, this );
+       context.registerListener( ViewEvent.class, this );
     }
     
     @Override
     public final void dispose( FFContext context ) {
-        IEventDispatcher eventDispatcher = context.getComponent( FFContext.EVENT_DISPATCHER );
-        eventDispatcher.unregister( AssetEvent.class, this );
-        eventDispatcher.unregister( ViewEvent.class, this );
+        context.disposeListener( AssetEvent.class, this );
+        context.disposeListener( ViewEvent.class, this );
         
         for ( Viewport viewport : viewports ) {
             viewport.dispose();
@@ -117,21 +114,21 @@ public final class GdxSystemInterface implements FFSystemInterface {
         Asset asset = event.asset;
         switch ( event.eventType ) {
             case ASSET_LOADED: {
-                if ( asset.getComponentType() == TextureAsset.class ) {
+                if ( asset.componentType() == TextureAsset.class ) {
                     createTexture( (TextureAsset) asset );
-                } else if ( asset.getComponentType() == SpriteAsset.class ) {
+                } else if ( asset.componentType() == SpriteAsset.class ) {
                     createSprite( (SpriteAsset) asset );
-                } else if ( asset.getComponentType() == SoundAsset.class ) {
+                } else if ( asset.componentType() == SoundAsset.class ) {
                     createSound( (SoundAsset) asset );
                 }
                 break;
             }
             case ASSET_DISPOSED: {
-                if ( asset.getComponentType() == TextureAsset.class ) {
+                if ( asset.componentType() == TextureAsset.class ) {
                     deleteTexture( (TextureAsset) asset );
-                } else if ( asset.getComponentType() == SpriteAsset.class ) {
+                } else if ( asset.componentType() == SpriteAsset.class ) {
                     deleteSprite( (SpriteAsset) asset );
-                } else if ( asset.getComponentType() == SoundAsset.class ) {
+                } else if ( asset.componentType() == SoundAsset.class ) {
                     deleteSound( (SoundAsset) asset );
                 }
                 break;
@@ -338,10 +335,10 @@ public final class GdxSystemInterface implements FFSystemInterface {
 
     private void createTexture( TextureAsset asset ) {
         Texture texture = null;
-        String colorFilterName = asset.getDynamicAttribute( GdxConfiguration.DynamicAttributes.TEXTURE_COLOR_FILTER_NAME );
+        String colorFilterName = asset.getDynamicAttribute( GdxFirefly.DynamicAttributes.TEXTURE_COLOR_FILTER_NAME );
         if ( !StringUtils.isBlank( colorFilterName ) ) {
             TypedKey<IColorFilter> filterKey = TypedKey.create( colorFilterName, IColorFilter.class );
-            IColorFilter colorFilter = context.getComponent( filterKey );
+            IColorFilter colorFilter = context.getProperty( filterKey );
             if ( colorFilter != null ) {
                 ColorFilteredTextureData textureData = new ColorFilteredTextureData( asset.getResourceName(), colorFilter );
                 texture = new Texture( textureData );

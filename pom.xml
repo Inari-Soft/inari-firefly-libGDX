@@ -59,5 +59,18 @@
     	<artifactId>gdx</artifactId>
     	<version>1.6.5</version>
     </dependency>
+    <dependency>
+    	<groupId>com.badlogicgames.gdx</groupId>
+    	<artifactId>gdx-backend-lwjgl</artifactId>
+    	<version>1.6.5</version>
+    	<scope>test</scope>
+    </dependency>
+    <dependency>
+    	<groupId>com.badlogicgames.gdx</groupId>
+    	<artifactId>gdx-platform</artifactId>
+    	<version>1.6.5</version>
+    	<classifier>natives-desktop</classifier>
+    	<scope>test</scope>
+    </dependency>
   </dependencies> 
 </project>
