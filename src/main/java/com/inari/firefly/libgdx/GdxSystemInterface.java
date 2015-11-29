@@ -146,9 +146,11 @@ public final class GdxSystemInterface implements FFSystemInterface {
             return -1;
         }
         
-        int lastPlayedSoundId = lastPlayingSoundOnChannel.get( channel );
-        if ( lastPlayedSoundId >= 0 && sounds.contains( lastPlayedSoundId ) ) {
-            sounds.get( lastPlayedSoundId ).stop();
+        if ( channel >= 0 && channel < lastPlayingSoundOnChannel.length() ) {
+            int lastPlayedSoundId = lastPlayingSoundOnChannel.get( channel );
+            if ( sounds.contains( lastPlayedSoundId ) ) {
+                sounds.get( lastPlayedSoundId ).stop();
+            }
         }
         lastPlayingSoundOnChannel.set( channel, soundId );
         

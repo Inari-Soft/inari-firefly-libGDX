@@ -44,7 +44,9 @@ public abstract class GdxFFApplicationAdapter extends ApplicationAdapter impleme
     @Override
     public final void onEvent( WorkflowEvent event ) {
         if ( event.type == WorkflowEvent.Type.WORKFLOW_FINISHED ) {
-            init( firefly.getContext() );
+            FFContext context = firefly.getContext();
+            init( context );
+            context.disposeListener( WorkflowEvent.class, this );
         }
     }
 
@@ -54,6 +56,12 @@ public abstract class GdxFFApplicationAdapter extends ApplicationAdapter impleme
     
     @Override
     public final void render () {
+        if ( firefly.exit() ) {
+            firefly.dispose();
+            Gdx.app.exit();
+            return;
+        }
+        
         firefly.update();
         firefly.render();
     }
@@ -75,7 +83,7 @@ public abstract class GdxFFApplicationAdapter extends ApplicationAdapter impleme
 
     @Override
     public final void dispose() {
-        firefly.dispose();
+        
     }
     
     
