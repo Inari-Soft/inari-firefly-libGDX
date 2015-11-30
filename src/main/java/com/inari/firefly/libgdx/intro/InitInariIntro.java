@@ -26,10 +26,10 @@ public final class InitInariIntro extends Task {
 
     @Override
     public final void run( FFContext context ) {
-        AssetSystem assetSystem = context.getSystem( AssetSystem.CONTEXT_KEY );
-        EntitySystem entitySystem = context.getSystem( EntitySystem.CONTEXT_KEY );
-        AnimationSystem animationSystem = context.getSystem( AnimationSystem.CONTEXT_KEY );
-        ControllerSystem controllerSystem = context.getSystem( ControllerSystem.CONTEXT_KEY );
+        AssetSystem assetSystem = context.getSystem( AssetSystem.SYSTEM_KEY );
+        EntitySystem entitySystem = context.getSystem( EntitySystem.SYSTEM_KEY );
+        AnimationSystem animationSystem = context.getSystem( AnimationSystem.SYSTEM_KEY );
+        ControllerSystem controllerSystem = context.getSystem( ControllerSystem.SYSTEM_KEY );
         
         animationSystem
             .getAnimationBuilder()
@@ -61,16 +61,15 @@ public final class InitInariIntro extends Task {
         assetSystem.loadAsset( BuildInariIntro.INARI_ASSET_KEY );
         assetSystem.loadAsset( BuildInariIntro.INARI_SPRITE_ASSET_KEY );
         
-        int logoEntityId = entitySystem
-                .getEntityBuilder()
-                    .set( ETransform.VIEW_ID, 0 )
-                    .set( ETransform.XPOSITION, context.getScreenWidth() / 2 - BuildInariIntro.INTRO_TEX_WIDTH / 2 )
-                    .set( ETransform.YPOSITION, context.getScreenHeight() / 2 - BuildInariIntro.INTRO_TEX_HEIGHT / 2 )
-                    .set( ESprite.SPRITE_ID, assetSystem.getAssetTypeKey( BuildInariIntro.INARI_SPRITE_ASSET_KEY ).id )
-                    .set( ESprite.TINT_COLOR, new RGBColor( 1f, 1f, 1f, 0f ) )
-                    .set( EController.CONTROLLER_IDS, new int[] { 0 } )
-                .build();
-        entitySystem.activate( logoEntityId );
+        entitySystem
+            .getEntityBuilder()
+                .set( ETransform.VIEW_ID, 0 )
+                .set( ETransform.XPOSITION, context.getScreenWidth() / 2 - BuildInariIntro.INTRO_TEX_WIDTH / 2 )
+                .set( ETransform.YPOSITION, context.getScreenHeight() / 2 - BuildInariIntro.INTRO_TEX_HEIGHT / 2 )
+                .set( ESprite.SPRITE_ID, assetSystem.getAssetTypeKey( BuildInariIntro.INARI_SPRITE_ASSET_KEY ).id )
+                .set( ESprite.TINT_COLOR, new RGBColor( 1f, 1f, 1f, 0f ) )
+                .set( EController.CONTROLLER_IDS, new int[] { 0 } )
+            .activate();
     }
     
 }

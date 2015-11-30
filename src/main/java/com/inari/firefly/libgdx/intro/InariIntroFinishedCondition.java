@@ -16,7 +16,7 @@ public final class InariIntroFinishedCondition implements StateChangeCondition {
     @Override
     public final boolean check( FFContext context, Workflow workflow, FFTimer timer ) {
         if ( animationSystem == null ) {
-            animationSystem = context.getSystem( AnimationSystem.CONTEXT_KEY );
+            animationSystem = context.getSystem( AnimationSystem.SYSTEM_KEY );
             animationId = animationSystem.getAnimationId( BuildInariIntro.INTRO_ANIMATION );
         }
         

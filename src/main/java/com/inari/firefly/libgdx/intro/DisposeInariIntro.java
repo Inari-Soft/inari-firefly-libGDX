@@ -17,12 +17,12 @@ public final class DisposeInariIntro extends Task {
 
     @Override
     public final void run( FFContext context ) {
-        AssetSystem assetSystem = context.getSystem( AssetSystem.CONTEXT_KEY );
-        EntitySystem entitySystem = context.getSystem( EntitySystem.CONTEXT_KEY );
-        StateSystem stateSystem = context.getSystem( StateSystem.CONTEXT_KEY );
-        TaskSystem taskSystem = context.getSystem( TaskSystem.CONTEXT_KEY );
-        AnimationSystem animationSystem = context.getSystem( AnimationSystem.CONTEXT_KEY );
-        ControllerSystem controllerSystem = context.getSystem( ControllerSystem.CONTEXT_KEY );
+        AssetSystem assetSystem = context.getSystem( AssetSystem.SYSTEM_KEY );
+        EntitySystem entitySystem = context.getSystem( EntitySystem.SYSTEM_KEY );
+        StateSystem stateSystem = context.getSystem( StateSystem.SYSTEM_KEY );
+        TaskSystem taskSystem = context.getSystem( TaskSystem.SYSTEM_KEY );
+        AnimationSystem animationSystem = context.getSystem( AnimationSystem.SYSTEM_KEY );
+        ControllerSystem controllerSystem = context.getSystem( ControllerSystem.SYSTEM_KEY );
         
         entitySystem.deleteAll();
         assetSystem.deleteAssets( BuildInariIntro.INTRO_NAME );
