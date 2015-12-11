@@ -8,8 +8,8 @@ import com.inari.firefly.animation.ColorEasingAnimation;
 import com.inari.firefly.animation.EasingData;
 import com.inari.firefly.asset.AssetSystem;
 import com.inari.firefly.control.ControllerSystem;
-import com.inari.firefly.control.EController;
 import com.inari.firefly.controller.entity.SpriteTintColorAnimationController;
+import com.inari.firefly.entity.EEntity;
 import com.inari.firefly.entity.ETransform;
 import com.inari.firefly.entity.EntitySystem;
 import com.inari.firefly.renderer.TextureAsset;
@@ -68,7 +68,7 @@ public final class InitInariIntro extends Task {
                 .set( ETransform.YPOSITION, context.getScreenHeight() / 2 - BuildInariIntro.INTRO_TEX_HEIGHT / 2 )
                 .set( ESprite.SPRITE_ID, assetSystem.getAssetTypeKey( BuildInariIntro.INARI_SPRITE_ASSET_KEY ).id )
                 .set( ESprite.TINT_COLOR, new RGBColor( 1f, 1f, 1f, 0f ) )
-                .set( EController.CONTROLLER_IDS, new int[] { 0 } )
+                .set( EEntity.CONTROLLER_IDS, new int[] { 0 } )
             .activate();
     }
     
