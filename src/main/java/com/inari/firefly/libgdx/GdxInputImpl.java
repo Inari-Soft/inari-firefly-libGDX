@@ -3,9 +3,9 @@ package com.inari.firefly.libgdx;
 import com.badlogic.gdx.Gdx;
 import com.inari.commons.lang.list.DynArray;
 import com.inari.commons.lang.list.IntBag;
-import com.inari.firefly.system.Input;
+import com.inari.firefly.system.external.FFInput;
 
-public class GdxInputImpl extends Input {
+public class GdxInputImpl extends FFInput {
     
     private IntBag buttonCodeMapping = new IntBag( 255, -1 );
     private DynArray<InputType> inputTypeMapping = new DynArray<InputType>();

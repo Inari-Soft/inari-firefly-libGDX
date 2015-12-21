@@ -18,8 +18,6 @@ package com.inari.firefly.libgdx;
 import java.util.Iterator;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.audio.Music;
-import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Pixmap.Format;
@@ -34,7 +32,7 @@ import com.inari.commons.graphics.RGBColor;
 import com.inari.commons.lang.TypedKey;
 import com.inari.commons.lang.indexed.Indexer;
 import com.inari.commons.lang.list.DynArray;
-import com.inari.commons.lang.list.IntBag;
+import com.inari.firefly.FFInitException;
 import com.inari.firefly.asset.Asset;
 import com.inari.firefly.asset.event.AssetEvent;
 import com.inari.firefly.filter.IColorFilter;
@@ -43,14 +41,12 @@ import com.inari.firefly.renderer.BlendMode;
 import com.inari.firefly.renderer.SpriteRenderable;
 import com.inari.firefly.renderer.TextureAsset;
 import com.inari.firefly.renderer.sprite.SpriteAsset;
-import com.inari.firefly.sound.SoundAsset;
 import com.inari.firefly.system.FFContext;
-import com.inari.firefly.system.FFInitException;
-import com.inari.firefly.system.FFSystemInterface;
+import com.inari.firefly.system.external.FFGraphics;
 import com.inari.firefly.system.view.View;
 import com.inari.firefly.system.view.event.ViewEvent;
 
-public final class GdxSystemInterface implements FFSystemInterface {
+public final class GdxGraphicsImpl implements FFGraphics {
     
     private final static float FBO_SCALER = 2f;
     
@@ -59,10 +55,7 @@ public final class GdxSystemInterface implements FFSystemInterface {
     private final DynArray<Texture> textures;
     private final DynArray<TextureRegion> sprites;
     private final DynArray<Viewport> viewports;
-    private final DynArray<com.badlogic.gdx.audio.Sound> sounds;
-    private final IntBag lastPlayingSoundOnChannel;
-    private final DynArray<Music> music;
-    
+
     private final SpriteBatch spriteBatch;
     
     private Viewport baseViewport = null;
@@ -70,13 +63,10 @@ public final class GdxSystemInterface implements FFSystemInterface {
     private Viewport activeViewport = null;
     private BlendMode currentBlendMode = BlendMode.NONE;
     
-    GdxSystemInterface() {
+    GdxGraphicsImpl() {
         textures = new DynArray<Texture>( Indexer.getIndexedObjectSize( TextureAsset.class ) );
         sprites = new DynArray<TextureRegion>( Indexer.getIndexedObjectSize( SpriteAsset.class ) );
         viewports = new DynArray<Viewport>( Indexer.getIndexedObjectSize( View.class ) );
-        sounds = new DynArray<com.badlogic.gdx.audio.Sound>();
-        lastPlayingSoundOnChannel = new IntBag( 5, -1 );
-        music = new DynArray<Music>();
         spriteBatch = new SpriteBatch();
     }
     
@@ -118,9 +108,7 @@ public final class GdxSystemInterface implements FFSystemInterface {
                     createTexture( (TextureAsset) asset );
                 } else if ( asset.componentType() == SpriteAsset.class ) {
                     createSprite( (SpriteAsset) asset );
-                } else if ( asset.componentType() == SoundAsset.class ) {
-                    createSound( (SoundAsset) asset );
-                }
+                } 
                 break;
             }
             case ASSET_DISPOSED: {
@@ -128,92 +116,11 @@ public final class GdxSystemInterface implements FFSystemInterface {
                     deleteTexture( (TextureAsset) asset );
                 } else if ( asset.componentType() == SpriteAsset.class ) {
                     deleteSprite( (SpriteAsset) asset );
-                } else if ( asset.componentType() == SoundAsset.class ) {
-                    deleteSound( (SoundAsset) asset );
-                }
+                } 
                 break;
             }
             default: {}
         }
-    }
-    
-    
-
-    @Override
-    public final long playSound( int soundId, int channel, boolean looping, float volume, float pitch, float pan ) {
-        Sound sound = sounds.get( soundId );
-        if ( sound == null ) {
-            return -1;
-        }
-        
-        if ( channel >= 0 && channel < lastPlayingSoundOnChannel.length() ) {
-            int lastPlayedSoundId = lastPlayingSoundOnChannel.get( channel );
-            if ( sounds.contains( lastPlayedSoundId ) ) {
-                sounds.get( lastPlayedSoundId ).stop();
-            }
-        }
-        lastPlayingSoundOnChannel.set( channel, soundId );
-        
-        long play = sound.play( volume, pitch, pan );
-        if ( looping ) {
-            sound.setLooping( play, true );
-        }
-        return play;
-    }
-
-    @Override
-    public final void changeSound( int soundId, long instanceId, float volume, float pitch, float pan ) {
-        Sound sound = sounds.get( soundId );
-        if ( sound == null ) {
-            return;
-        }
-        
-        sound.setPan( instanceId, pan, volume );
-        sound.setPitch( instanceId, pitch );
-        sound.setVolume( instanceId, volume );
-    }
-
-    @Override
-    public final void stopSound( int soundId, long instanceId ) {
-        Sound sound = sounds.get( soundId );
-        if ( sound == null ) {
-            return;
-        }
-        
-        sound.stop( instanceId );
-    }
-
-    @Override
-    public final void playMusic( int soundId, boolean looping, float volume, float pan ) {
-        Music sound = music.get( soundId );
-        if ( sound == null || sound.isPlaying() ) {
-            return;
-        }
-        
-        sound.setPan( pan, volume );
-        sound.setLooping( looping );
-        
-        sound.play();
-    }
-
-    @Override
-    public final void changeMusic( int soundId, float volume, float pan ) {
-        Music sound = music.get( soundId );
-        if ( sound == null || sound.isPlaying() ) {
-            return;
-        }
-        
-        sound.setPan( pan, volume );
-    }
-
-    @Override
-    public final void stopMusic( int soundId ) {
-        Music sound = music.get( soundId );
-        if ( sound == null || !sound.isPlaying() ) {
-            return;
-        }
-        
-        sound.stop();
     }
 
     @Override
@@ -356,37 +263,7 @@ public final class GdxSystemInterface implements FFSystemInterface {
         
         textures.set( asset.index(), texture );
     }
-    
-    private void createSound( SoundAsset asset ) {
-        if ( asset.isStreaming() ) {
-            music.set( 
-                asset.index(), 
-                Gdx.audio.newMusic( Gdx.files.classpath( asset.getResourceName() ) ) 
-            );
-        } else {
-            sounds.set( 
-                asset.index(), 
-                Gdx.audio.newSound( Gdx.files.classpath( asset.getResourceName() ) ) 
-            );
-        }
-    }
-    
-    private void deleteSound( SoundAsset asset ) {
-        if ( asset.isStreaming() ) {
-            Music music = this.music.remove( asset.index() );
-            if ( music != null ) {
-                music.dispose();
-            }
-        } else {
-            if ( sounds.contains( asset.index() ) ) {
-                com.badlogic.gdx.audio.Sound sound = sounds.remove( asset.index() );
-                if ( sound != null ) {
-                    sound.dispose();
-                }
-            }
-        }
-    }
-    
+
     private Viewport createBaseViewport( View view ) {
         Rectangle bounds = view.getBounds();
         OrthographicCamera camera = new OrthographicCamera( bounds.width, bounds.height );

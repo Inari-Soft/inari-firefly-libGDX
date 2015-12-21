@@ -1,12 +1,12 @@
 package com.inari.firefly.libgdx;
 
 import com.badlogic.gdx.utils.TimeUtils;
-import com.inari.firefly.system.FFTimer;
+import com.inari.firefly.system.external.FFTimer;
 
 public class GdxTimerImpl extends FFTimer {
 
     @Override
-    protected void tick() {
+    public void tick() {
         if ( lastUpdateTime == 0 ) {
             lastUpdateTime = TimeUtils.millis();
         } else {
