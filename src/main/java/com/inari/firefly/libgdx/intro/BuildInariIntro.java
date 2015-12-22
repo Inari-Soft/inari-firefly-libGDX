@@ -37,7 +37,7 @@ public class BuildInariIntro extends Task {
         TaskSystem taskSystem = context.getSystem( TaskSystem.SYSTEM_KEY );
         
         taskSystem.getTaskBuilder()
-            .set( 
+            .add( 
                 Task.NAME.value( INTRO_START_TASK ),
                 Task.REMOVE_AFTER_RUN.value( true ) 
             )
@@ -59,7 +59,7 @@ public class BuildInariIntro extends Task {
         .build();
         
         stateSystem.getStateChangeBuilder()
-            .set( 
+            .add( 
                 StateChange.NAME.value( INTRO_STATE_CHANGE ),
                 StateChange.WORKFLOW_ID.value( workflowId ),
                 StateChange.FORM_STATE_ID.value( stateSystem.getStateId( INTRO_START_STATE ) ),
