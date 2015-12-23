@@ -30,14 +30,12 @@ import com.inari.commons.geom.Position;
 import com.inari.commons.geom.Rectangle;
 import com.inari.commons.graphics.RGBColor;
 import com.inari.commons.lang.TypedKey;
-import com.inari.commons.lang.indexed.Indexer;
 import com.inari.commons.lang.list.DynArray;
 import com.inari.firefly.FFInitException;
-import com.inari.firefly.asset.Asset;
-import com.inari.firefly.asset.event.AssetEvent;
 import com.inari.firefly.filter.IColorFilter;
 import com.inari.firefly.libgdx.filter.ColorFilteredTextureData;
 import com.inari.firefly.renderer.BlendMode;
+import com.inari.firefly.renderer.ShaderAsset;
 import com.inari.firefly.renderer.SpriteRenderable;
 import com.inari.firefly.renderer.TextureAsset;
 import com.inari.firefly.renderer.sprite.SpriteAsset;
@@ -64,9 +62,9 @@ public final class GdxGraphicsImpl implements FFGraphics {
     private BlendMode currentBlendMode = BlendMode.NONE;
     
     GdxGraphicsImpl() {
-        textures = new DynArray<Texture>( Indexer.getIndexedObjectSize( TextureAsset.class ) );
-        sprites = new DynArray<TextureRegion>( Indexer.getIndexedObjectSize( SpriteAsset.class ) );
-        viewports = new DynArray<Viewport>( Indexer.getIndexedObjectSize( View.class ) );
+        textures = new DynArray<Texture>( 100 );
+        sprites = new DynArray<TextureRegion>( 100, 50 );
+        viewports = new DynArray<Viewport>( 50 );
         spriteBatch = new SpriteBatch();
     }
     
@@ -74,13 +72,11 @@ public final class GdxGraphicsImpl implements FFGraphics {
     public void init( FFContext context ) {
         this.context = context;
         
-       context.registerListener( AssetEvent.class, this );
        context.registerListener( ViewEvent.class, this );
     }
     
     @Override
     public final void dispose( FFContext context ) {
-        context.disposeListener( AssetEvent.class, this );
         context.disposeListener( ViewEvent.class, this );
         
         for ( Viewport viewport : viewports ) {
@@ -97,30 +93,6 @@ public final class GdxGraphicsImpl implements FFGraphics {
             baseViewport.dispose();
         }
         baseView = null;
-    }
-    
-    @Override
-    public final void onAssetEvent( AssetEvent event ) {
-        Asset asset = event.asset;
-        switch ( event.eventType ) {
-            case ASSET_LOADED: {
-                if ( asset.componentType() == TextureAsset.class ) {
-                    createTexture( (TextureAsset) asset );
-                } else if ( asset.componentType() == SpriteAsset.class ) {
-                    createSprite( (SpriteAsset) asset );
-                } 
-                break;
-            }
-            case ASSET_DISPOSED: {
-                if ( asset.componentType() == TextureAsset.class ) {
-                    deleteTexture( (TextureAsset) asset );
-                } else if ( asset.componentType() == SpriteAsset.class ) {
-                    deleteSprite( (SpriteAsset) asset );
-                } 
-                break;
-            }
-            default: {}
-        }
     }
 
     @Override
@@ -149,6 +121,86 @@ public final class GdxGraphicsImpl implements FFGraphics {
             }
             default: {}
         }
+    }
+
+    // TODO make it simpler
+    @Override
+    public final int createTexture( TextureAsset asset ) {
+        Texture texture = null;
+        int textureId = -1;
+        String colorFilterName = asset.getDynamicAttribute( GdxFirefly.DynamicAttributes.TEXTURE_COLOR_FILTER_NAME );
+        if ( !StringUtils.isBlank( colorFilterName ) ) {
+            TypedKey<IColorFilter> filterKey = TypedKey.create( colorFilterName, IColorFilter.class );
+            IColorFilter colorFilter = context.getProperty( filterKey );
+            if ( colorFilter != null ) {
+                ColorFilteredTextureData textureData = new ColorFilteredTextureData( asset.getResourceName(), colorFilter );
+                texture = new Texture( textureData );
+                textureId = textures.add( texture );
+            }
+        } 
+        
+        if ( textureId < 0 ) {
+            textureId = createTexture( asset.getResourceName() );
+            texture = textures.get( textureId );
+        }
+        
+        asset.setWidth( texture.getWidth() );
+        asset.setHeight( texture.getHeight() );
+
+        return textureId;
+    }
+    
+    @Override
+    public final int createTexture( String resourceName ) {
+        return textures.add( new Texture( Gdx.files.internal( resourceName ) ) );
+    }
+
+    @Override
+    public final void disposeTexture( int textureId ) {
+        Texture texture = textures.remove( textureId );
+        texture.dispose();
+    }
+
+    @Override
+    public final int createSprite( int textureId, Rectangle textureRegion ) {
+        if ( !textures.contains( textureId ) ) {
+            throw new FFInitException( "Texture with id: " + textureId + "not loaded" );
+        }
+        
+        Texture texture = textures.get( textureId );
+        TextureRegion sprite = new TextureRegion( texture, textureRegion.x, textureRegion.y, textureRegion.width, textureRegion.height );
+        sprite.flip( false, true );
+        
+        
+        return sprites.add( sprite );
+    }
+    
+    @Override
+    public final int createSprite( SpriteAsset asset ) {
+        return createSprite( asset.getTextureId(), asset.getTextureRegion() );
+    }
+
+    @Override
+    public final void disposeSprite( int spriteId ) {
+        sprites.remove( spriteId );
+    }
+
+    @Override
+    public final int createShader( String shaderProgram ) {
+        // TODO
+        throw new UnsupportedOperationException( "TODO" );
+    }
+    
+    @Override
+    public final int createShader( ShaderAsset shaderAsset ) {
+        // TODO
+        throw new UnsupportedOperationException( "TODO" );
+    }
+
+    @Override
+    public final void disposeShader( int shaderId ) {
+        // TODO
+        throw new UnsupportedOperationException( "TODO" );
     }
 
     @Override
@@ -217,51 +269,6 @@ public final class GdxGraphicsImpl implements FFGraphics {
         }
         
         spriteBatch.flush();
-    }
-
-    private void deleteSprite( SpriteAsset asset ) {
-        sprites.remove( asset.index() );
-    }
-
-    private void deleteTexture( TextureAsset asset ) {
-        Texture texture = textures.remove( asset.index() );
-        texture.dispose();
-    }
-
-    private void createSprite( SpriteAsset asset ) {
-        Rectangle textureRegion = asset.getTextureRegion();
-        int textureId = asset.getTextureId();
-        if ( !textures.contains( textureId ) ) {
-            throw new FFInitException( "Texture with id: " + textureId + " for SpriteAsset: " + asset.getName() + " not loaded" );
-        }
-        
-        Texture texture = textures.get( textureId );
-        TextureRegion sprite = new TextureRegion( texture, textureRegion.x, textureRegion.y, textureRegion.width, textureRegion.height );
-        sprite.flip( false, true );
-        
-        sprites.set( asset.index(), sprite );
-    }
-
-    private void createTexture( TextureAsset asset ) {
-        Texture texture = null;
-        String colorFilterName = asset.getDynamicAttribute( GdxFirefly.DynamicAttributes.TEXTURE_COLOR_FILTER_NAME );
-        if ( !StringUtils.isBlank( colorFilterName ) ) {
-            TypedKey<IColorFilter> filterKey = TypedKey.create( colorFilterName, IColorFilter.class );
-            IColorFilter colorFilter = context.getProperty( filterKey );
-            if ( colorFilter != null ) {
-                ColorFilteredTextureData textureData = new ColorFilteredTextureData( asset.getResourceName(), colorFilter );
-                texture = new Texture( textureData );
-            }
-        } 
-        
-        if ( texture == null ) {
-            texture = new Texture( Gdx.files.internal( asset.getResourceName() ) );
-        }
-        
-        asset.setWidth( texture.getWidth() );
-        asset.setHeight( texture.getHeight() );
-        
-        textures.set( asset.index(), texture );
     }
 
     private Viewport createBaseViewport( View view ) {

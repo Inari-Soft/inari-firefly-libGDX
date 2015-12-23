@@ -31,44 +31,34 @@ public final class InitInariIntro extends Task {
         AnimationSystem animationSystem = context.getSystem( AnimationSystem.SYSTEM_KEY );
         ControllerSystem controllerSystem = context.getSystem( ControllerSystem.SYSTEM_KEY );
         
-        animationSystem
-            .getAnimationBuilder()
-                .set( ColorEasingAnimation.NAME, BuildInariIntro.INTRO_ANIMATION )
-                .set( ColorEasingAnimation.LOOPING, false )
-                .set( ColorEasingAnimation.EASING_DATA_ALPHA, new EasingData( Easing.Type.LINEAR, 0.0f, 1.0f, 1000 ) )
+        animationSystem.getAnimationBuilder()
+            .set( ColorEasingAnimation.NAME, BuildInariIntro.INTRO_ANIMATION )
+            .set( ColorEasingAnimation.LOOPING, false )
+            .set( ColorEasingAnimation.EASING_DATA_ALPHA, new EasingData( Easing.Type.LINEAR, 0.0f, 1.0f, 1000 ) )
             .build( ColorEasingAnimation.class );
         
-        controllerSystem
-            .getControllerBuilder()
-                .set( SpriteTintColorAnimationController.TINT_COLOR_ANIMATION_ID, 0 )
-            .build( SpriteTintColorAnimationController.class );
+        controllerSystem.getControllerBuilder()
+            .set( SpriteTintColorAnimationController.TINT_COLOR_ANIMATION_ID, 0 )
+        .build( SpriteTintColorAnimationController.class );
                 
+        assetSystem .getAssetBuilder()
+            .set( TextureAsset.NAME, BuildInariIntro.INTRO_TEXTURE )
+            .set( TextureAsset.RESOURCE_NAME, BuildInariIntro.INARI_LOGO_RESOURCE_PATH )
+            .activate( TextureAsset.class );
+        TextureAsset textureAsset = assetSystem.getAssetAs( BuildInariIntro.INTRO_TEXTURE, TextureAsset.class );
+        assetSystem .getAssetBuilder()
+            .set( SpriteAsset.NAME, BuildInariIntro.INTRO_SPRITE )
+            .set( SpriteAsset.TEXTURE_ASSET_ID, assetSystem.getAssetId( BuildInariIntro.INTRO_TEXTURE ) )
+            .set( SpriteAsset.TEXTURE_REGION, new Rectangle( 0, 0, textureAsset.getWidth(), textureAsset.getHeight() ) )
+            .activate( SpriteAsset.class );
         
-        assetSystem
-            .getAssetBuilder(  )
-                .set( TextureAsset.NAME, BuildInariIntro.INARI_ASSET_KEY.name )
-                .set( TextureAsset.ASSET_GROUP, BuildInariIntro.INARI_ASSET_KEY.group )
-                .set( TextureAsset.RESOURCE_NAME, BuildInariIntro.INARI_LOGO_RESOURCE_PATH )
-                .set( TextureAsset.TEXTURE_WIDTH, BuildInariIntro.INTRO_TEX_WIDTH )
-                .set( TextureAsset.TEXTURE_HEIGHT, BuildInariIntro.INTRO_TEX_HEIGHT )
-            .buildAndNext( TextureAsset.class )
-                .set( SpriteAsset.NAME, BuildInariIntro.INARI_SPRITE_ASSET_KEY.name )
-                .set( SpriteAsset.ASSET_GROUP, BuildInariIntro.INARI_SPRITE_ASSET_KEY.group )
-                .set( SpriteAsset.TEXTURE_ID, assetSystem.getAssetTypeKey( BuildInariIntro.INARI_ASSET_KEY ).id )
-                .set( SpriteAsset.TEXTURE_REGION, new Rectangle( 0, 0, BuildInariIntro.INTRO_TEX_WIDTH, BuildInariIntro.INTRO_TEX_HEIGHT ) )
-            .build( SpriteAsset.class );
-        
-        assetSystem.loadAsset( BuildInariIntro.INARI_ASSET_KEY );
-        assetSystem.loadAsset( BuildInariIntro.INARI_SPRITE_ASSET_KEY );
-        
-        entitySystem
-            .getEntityBuilder()
-                .set( ETransform.VIEW_ID, 0 )
-                .set( ETransform.XPOSITION, context.getScreenWidth() / 2 - BuildInariIntro.INTRO_TEX_WIDTH / 2 )
-                .set( ETransform.YPOSITION, context.getScreenHeight() / 2 - BuildInariIntro.INTRO_TEX_HEIGHT / 2 )
-                .set( ESprite.SPRITE_ID, assetSystem.getAssetTypeKey( BuildInariIntro.INARI_SPRITE_ASSET_KEY ).id )
-                .set( ESprite.TINT_COLOR, new RGBColor( 1f, 1f, 1f, 0f ) )
-                .add( EEntity.CONTROLLER_IDS, 0 )
+        entitySystem.getEntityBuilder()
+            .set( ETransform.VIEW_ID, 0 )
+            .set( ETransform.XPOSITION, context.getScreenWidth() / 2 - textureAsset.getWidth() / 2 )
+            .set( ETransform.YPOSITION, context.getScreenHeight() / 2 - textureAsset.getHeight() / 2 )
+            .set( ESprite.SPRITE_ID, assetSystem.getAssetInstanceId( BuildInariIntro.INTRO_SPRITE ) )
+            .set( ESprite.TINT_COLOR, new RGBColor( 1f, 1f, 1f, 0f ) )
+            .add( EEntity.CONTROLLER_IDS, 0 )
             .activate();
     }
     

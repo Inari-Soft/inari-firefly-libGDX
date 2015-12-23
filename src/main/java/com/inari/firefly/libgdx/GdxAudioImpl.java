@@ -6,8 +6,6 @@ import com.badlogic.gdx.audio.Sound;
 import com.inari.commons.lang.list.DynArray;
 import com.inari.commons.lang.list.IntBag;
 import com.inari.firefly.FFInitException;
-import com.inari.firefly.asset.Asset;
-import com.inari.firefly.asset.event.AssetEvent;
 import com.inari.firefly.sound.SoundAsset;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.external.FFAudio;
@@ -26,13 +24,10 @@ public final class GdxAudioImpl implements FFAudio {
     
     @Override
     public final void init( FFContext context ) throws FFInitException {
-        context.registerListener( AssetEvent.class, this );
     }
 
     @Override
     public final void dispose( FFContext context ) {
-        context.disposeListener( AssetEvent.class, this );
-        
         for ( com.badlogic.gdx.audio.Sound sound : sounds ) {
             sound.dispose();
         }
@@ -42,26 +37,6 @@ public final class GdxAudioImpl implements FFAudio {
             m.dispose();
         }
         music.clear();
-    }
-    
-    @Override
-    public final void onAssetEvent( AssetEvent event ) {
-        Asset asset = event.asset;
-        switch ( event.eventType ) {
-            case ASSET_LOADED: {
-                if ( asset.componentType() == SoundAsset.class ) {
-                    createSound( (SoundAsset) asset );
-                }
-                break;
-            }
-            case ASSET_DISPOSED: {
-                if ( asset.componentType() == SoundAsset.class ) {
-                    deleteSound( (SoundAsset) asset );
-                }
-                break;
-            }
-            default: {}
-        }
     }
     
     @Override
@@ -141,21 +116,17 @@ public final class GdxAudioImpl implements FFAudio {
         sound.stop();
     }
     
-    private final void createSound( SoundAsset asset ) {
+    @Override
+    public final int createSound( SoundAsset asset ) {
         if ( asset.isStreaming() ) {
-            music.set( 
-                asset.index(), 
-                Gdx.audio.newMusic( Gdx.files.classpath( asset.getResourceName() ) ) 
-            );
+            return music.add( Gdx.audio.newMusic( Gdx.files.classpath( asset.getResourceName() ) ) );
         } else {
-            sounds.set( 
-                asset.index(), 
-                Gdx.audio.newSound( Gdx.files.classpath( asset.getResourceName() ) ) 
-            );
+            return sounds.add( Gdx.audio.newSound( Gdx.files.classpath( asset.getResourceName() ) ) );
         }
     }
     
-    private final void deleteSound( SoundAsset asset ) {
+    @Override
+    public final void disposeSound( SoundAsset asset ) {
         if ( asset.isStreaming() ) {
             Music music = this.music.remove( asset.index() );
             if ( music != null ) {

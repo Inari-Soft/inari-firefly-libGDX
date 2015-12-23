@@ -25,7 +25,7 @@ public final class DisposeInariIntro extends Task {
         ControllerSystem controllerSystem = context.getSystem( ControllerSystem.SYSTEM_KEY );
         
         entitySystem.deleteAll();
-        assetSystem.deleteAssets( BuildInariIntro.INTRO_NAME );
+        assetSystem.deleteAsset( BuildInariIntro.INTRO_TEXTURE );
         stateSystem.clear();
         taskSystem.clear();
         animationSystem.clear();
