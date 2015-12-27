@@ -12,9 +12,9 @@ import com.inari.firefly.controller.entity.SpriteTintColorAnimationController;
 import com.inari.firefly.entity.EEntity;
 import com.inari.firefly.entity.ETransform;
 import com.inari.firefly.entity.EntitySystem;
-import com.inari.firefly.renderer.TextureAsset;
-import com.inari.firefly.renderer.sprite.ESprite;
-import com.inari.firefly.renderer.sprite.SpriteAsset;
+import com.inari.firefly.graphics.TextureAsset;
+import com.inari.firefly.graphics.sprite.ESprite;
+import com.inari.firefly.graphics.sprite.SpriteAsset;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.task.Task;
 

@@ -6,7 +6,7 @@ import com.badlogic.gdx.audio.Sound;
 import com.inari.commons.lang.list.DynArray;
 import com.inari.commons.lang.list.IntBag;
 import com.inari.firefly.FFInitException;
-import com.inari.firefly.sound.SoundAsset;
+import com.inari.firefly.audio.SoundAsset;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.external.FFAudio;
 

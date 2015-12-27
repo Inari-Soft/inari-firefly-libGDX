@@ -2,7 +2,7 @@ package com.inari.firefly.libgdx;
 
 import com.inari.commons.event.EventDispatcher;
 import com.inari.firefly.component.attr.AttributeKey;
-import com.inari.firefly.renderer.TextureAsset;
+import com.inari.firefly.graphics.TextureAsset;
 import com.inari.firefly.system.FireFly;
 
 public final class GdxFirefly extends FireFly {
