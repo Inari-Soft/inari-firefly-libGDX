@@ -4,8 +4,8 @@ import com.inari.commons.geom.Easing;
 import com.inari.commons.geom.Rectangle;
 import com.inari.commons.graphics.RGBColor;
 import com.inari.firefly.animation.AnimationSystem;
-import com.inari.firefly.animation.ColorEasingAnimation;
-import com.inari.firefly.animation.EasingData;
+import com.inari.firefly.animation.easing.ColorEasingAnimation;
+import com.inari.firefly.animation.easing.EasingData;
 import com.inari.firefly.asset.AssetSystem;
 import com.inari.firefly.control.ControllerSystem;
 import com.inari.firefly.controller.entity.SpriteTintColorAnimationController;
@@ -38,7 +38,7 @@ public final class InitInariIntro extends Task {
             .build( ColorEasingAnimation.class );
         
         controllerSystem.getControllerBuilder()
-            .set( SpriteTintColorAnimationController.TINT_COLOR_ANIMATION_ID, 0 )
+            .set( SpriteTintColorAnimationController.ANIMATION_ID, 0 )
         .build( SpriteTintColorAnimationController.class );
                 
         assetSystem .getAssetBuilder()
