@@ -1,6 +1,5 @@
 package com.inari.firefly.libgdx.intro;
 
-import com.inari.firefly.state.State;
 import com.inari.firefly.state.StateChange;
 import com.inari.firefly.state.StateSystem;
 import com.inari.firefly.state.Workflow;
@@ -46,24 +45,11 @@ public class BuildInariIntro extends Task {
         int workflowId = stateSystem.getWorkflowBuilder()
             .set( Workflow.NAME, INTRO_WORKFLOW )
             .set( Workflow.START_STATE_NAME, INTRO_START_STATE )
-            .set( Workflow.INIT_TASK_ID, taskSystem.getTaskId( INTRO_START_TASK ) )
+            .set( Workflow.INIT_TASK_NAME, INTRO_START_TASK )
+            .add( Workflow.STATES, INTRO_START_STATE )
+            .add( Workflow.STATE_CHANGES, new StateChange( INTRO_STATE_CHANGE, INTRO_START_STATE, null, INTRO_END_TASK, new InariIntroFinishedCondition() ) )
         .build();
-                
-        stateSystem.getStateBuilder()
-            .set( State.WORKFLOW_ID, workflowId )
-            .set( State.NAME, INTRO_START_STATE )
-        .build();
-        
-        stateSystem.getStateChangeBuilder()
-            .add( 
-                StateChange.NAME.value( INTRO_STATE_CHANGE ),
-                StateChange.WORKFLOW_ID.value( workflowId ),
-                StateChange.FORM_STATE_ID.value( stateSystem.getStateId( INTRO_START_STATE ) ),
-                StateChange.CONDITION_TYPE_NAME.value( InariIntroFinishedCondition.class.getName() ),
-                StateChange.TASK_ID.value( taskSystem.getTaskId( INTRO_END_TASK ) )
-            )
-        .build();
-        
+
         stateSystem.activateWorkflow( workflowId );
     }
 
