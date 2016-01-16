@@ -42,7 +42,7 @@ import com.inari.firefly.libgdx.filter.ColorFilteredTextureData;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.external.FFGraphics;
 import com.inari.firefly.system.view.View;
-import com.inari.firefly.system.view.event.ViewEvent;
+import com.inari.firefly.system.view.ViewEvent;
 
 public final class GdxGraphicsImpl implements FFGraphics {
     

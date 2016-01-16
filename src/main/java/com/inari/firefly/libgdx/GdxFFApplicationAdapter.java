@@ -8,13 +8,13 @@ import com.badlogic.gdx.Gdx;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.dynattr.DynamicAttribueMapper;
 import com.inari.firefly.libgdx.intro.BuildInariIntro;
-import com.inari.firefly.state.event.WorkflowEvent;
-import com.inari.firefly.state.event.WorkflowEventListener;
+import com.inari.firefly.state.WorkflowEvent;
+import com.inari.firefly.state.WorkflowEventListener;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.FireFly;
 import com.inari.firefly.task.Task;
-import com.inari.firefly.task.event.TaskEvent;
-import com.inari.firefly.task.event.TaskEvent.Type;
+import com.inari.firefly.task.TaskEvent;
+import com.inari.firefly.task.TaskEvent.Type;
 
 public abstract class GdxFFApplicationAdapter extends ApplicationAdapter implements WorkflowEventListener {
 
