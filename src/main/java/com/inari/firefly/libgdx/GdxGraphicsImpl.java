@@ -206,10 +206,7 @@ public final class GdxGraphicsImpl implements FFGraphics {
     @Override
     public final void startRendering( View view ) {
         activeViewport = viewports.get( view.index() );
-        activeViewport.update( spriteBatch, view );
-        if ( !view.isBase() ) {
-            activeViewport.fbo.begin();
-        } 
+        activeViewport.activate( spriteBatch, view );
         spriteBatch.begin();
     }
 
@@ -254,7 +251,7 @@ public final class GdxGraphicsImpl implements FFGraphics {
     public final void flush( Iterator<View> virtualViews ) {
         if ( virtualViews != null && virtualViews.hasNext() ) {
             
-            baseViewport.update( spriteBatch, baseView );
+            baseViewport.activate( spriteBatch, baseView );
             spriteBatch.begin();
             
             while ( virtualViews.hasNext() ) {
@@ -305,7 +302,7 @@ public final class GdxGraphicsImpl implements FFGraphics {
             }
         }
 
-        final void update( SpriteBatch spriteBatch, View view ) {
+        final void activate( SpriteBatch spriteBatch, View view ) {
             Position worldPosition = view.getWorldPosition();
             float zoom = view.getZoom();
             RGBColor clearColor = view.getClearColor();
@@ -316,6 +313,10 @@ public final class GdxGraphicsImpl implements FFGraphics {
             camera.position.y = camera.position.y + worldPosition.y;
             camera.update();
             spriteBatch.setProjectionMatrix( camera.combined );
+            
+            if ( fbo != null ) {
+                fbo.begin();
+            }
             
             Gdx.graphics.getGL20().glClearColor( clearColor.r, clearColor.g, clearColor.b, clearColor.a );
             Gdx.graphics.getGL20().glClear( GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT );
