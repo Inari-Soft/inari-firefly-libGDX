@@ -5,16 +5,22 @@ import java.util.Collection;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
+import com.inari.firefly.animation.AnimationSystem;
+import com.inari.firefly.asset.Asset;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.dynattr.DynamicAttribueMapper;
+import com.inari.firefly.control.ControllerSystem;
+import com.inari.firefly.entity.EntitySystem;
 import com.inari.firefly.libgdx.intro.BuildInariIntro;
+import com.inari.firefly.state.StateSystem;
 import com.inari.firefly.state.WorkflowEvent;
 import com.inari.firefly.state.WorkflowEventListener;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.FireFly;
 import com.inari.firefly.task.Task;
-import com.inari.firefly.task.TaskEvent;
-import com.inari.firefly.task.TaskEvent.Type;
+import com.inari.firefly.task.TaskSystem;
+import com.inari.firefly.task.TaskSystemEvent;
+import com.inari.firefly.task.TaskSystemEvent.Type;
 
 public abstract class GdxFFApplicationAdapter extends ApplicationAdapter implements WorkflowEventListener {
 
@@ -38,16 +44,29 @@ public abstract class GdxFFApplicationAdapter extends ApplicationAdapter impleme
             .set( Task.REMOVE_AFTER_RUN, true )
             .set( Task.NAME, BuildInariIntro.INTRO_NAME )
             .build( BuildInariIntro.class );
-        context.notify( new TaskEvent( Type.RUN_TASK, startTaskId ) );
+        context.notify( new TaskSystemEvent( Type.RUN_TASK, startTaskId ) );
     }
 
     @Override
     public final void onEvent( WorkflowEvent event ) {
         if ( event.type == WorkflowEvent.Type.WORKFLOW_FINISHED ) {
+            
             FFContext context = firefly.getContext();
+            clearIntro( context );
+            
             init( context );
+            
             context.disposeListener( WorkflowEvent.class, this );
         }
+    }
+
+    private void clearIntro( FFContext context ) {
+        context.getSystem( EntitySystem.SYSTEM_KEY ).deleteAll();
+        context.deleteSystemComponent( Asset.TYPE_KEY, BuildInariIntro.INTRO_TEXTURE );
+        context.getSystem( StateSystem.SYSTEM_KEY ).clear();
+        context.getSystem( TaskSystem.SYSTEM_KEY ).clear();
+        context.getSystem( AnimationSystem.SYSTEM_KEY ).clear();
+        context.getSystem( ControllerSystem.SYSTEM_KEY ).clear();
     }
 
     protected Collection<AttributeKey<?>> getDynamicAttributes() {
