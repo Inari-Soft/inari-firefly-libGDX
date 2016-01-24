@@ -32,17 +32,17 @@ public class BuildInariIntro extends Task {
         TaskSystem taskSystem = context.getSystem( TaskSystem.SYSTEM_KEY );
         
         taskSystem.getTaskBuilder()
+            .set( Task.NAME, INTRO_START_TASK )
+            .set( Task.REMOVE_AFTER_RUN, true ) 
             .add( 
-                Task.NAME.value( INTRO_START_TASK ),
-                Task.REMOVE_AFTER_RUN.value( true ) 
+                Task.TRIGGERS, 
+                new WorkflowEventTrigger( 
+                    INTRO_WORKFLOW, 
+                    WorkflowEventTrigger.Type.ENTER_STATE, 
+                    INTRO_START_STATE
+                ) 
             )
         .build( InitInariIntro.class );
-        taskSystem.getTaskTriggerBuilder()
-            .set( WorkflowEventTrigger.TRIGGER_TYPE, WorkflowEventTrigger.Type.ENTER_STATE )
-            .set( WorkflowEventTrigger.WORKFLOW_NAME, INTRO_WORKFLOW )
-            .set( WorkflowEventTrigger.TRIGGER_NAME, INTRO_START_STATE )
-            .set( WorkflowEventTrigger.TASK_ID, taskSystem.getTaskId( INTRO_START_TASK ) )
-        .build( WorkflowEventTrigger.class );
             
         
         int workflowId = stateSystem.getWorkflowBuilder()
