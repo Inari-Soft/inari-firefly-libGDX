@@ -20,7 +20,7 @@ public final class InariIntroFinishedCondition implements StateChangeCondition {
             animationId = animationSystem.getAnimationId( BuildInariIntro.INTRO_ANIMATION );
         }
         
-        return animationSystem.isFinished( animationId ) && 
+        return !animationSystem.exists( animationId ) && 
                ( Gdx.input.isKeyPressed( Input.Keys.SPACE ) || Gdx.input.isTouched() || Gdx.input.isButtonPressed( Input.Buttons.LEFT ) );
     }
 }

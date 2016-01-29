@@ -35,7 +35,7 @@ public final class InitInariIntro extends Task {
             .set( ColorEasingAnimation.NAME, BuildInariIntro.INTRO_ANIMATION )
             .set( ColorEasingAnimation.LOOPING, false )
             .set( ColorEasingAnimation.EASING_DATA_ALPHA, new EasingData( Easing.Type.LINEAR, 0.0f, 1.0f, 1000 ) )
-            .build( ColorEasingAnimation.class );
+        .activate( ColorEasingAnimation.class );
         
         controllerSystem.getControllerBuilder()
             .set( SpriteTintColorAnimationController.ANIMATION_ID, 0 )
@@ -44,13 +44,13 @@ public final class InitInariIntro extends Task {
         assetSystem .getAssetBuilder()
             .set( TextureAsset.NAME, BuildInariIntro.INTRO_TEXTURE )
             .set( TextureAsset.RESOURCE_NAME, BuildInariIntro.INARI_LOGO_RESOURCE_PATH )
-            .activate( TextureAsset.class );
+        .activate( TextureAsset.class );
         TextureAsset textureAsset = assetSystem.getAssetAs( BuildInariIntro.INTRO_TEXTURE, TextureAsset.class );
         assetSystem .getAssetBuilder()
             .set( SpriteAsset.NAME, BuildInariIntro.INTRO_SPRITE )
             .set( SpriteAsset.TEXTURE_ASSET_ID, assetSystem.getAssetId( BuildInariIntro.INTRO_TEXTURE ) )
             .set( SpriteAsset.TEXTURE_REGION, new Rectangle( 0, 0, textureAsset.getWidth(), textureAsset.getHeight() ) )
-            .activate( SpriteAsset.class );
+        .activate( SpriteAsset.class );
         
         entitySystem.getEntityBuilder()
             .set( ETransform.VIEW_ID, 0 )
@@ -59,7 +59,7 @@ public final class InitInariIntro extends Task {
             .set( ESprite.SPRITE_ID, assetSystem.getAssetInstanceId( BuildInariIntro.INTRO_SPRITE ) )
             .set( ESprite.TINT_COLOR, new RGBColor( 1f, 1f, 1f, 0f ) )
             .add( EEntity.CONTROLLER_IDS, 0 )
-            .activate();
+        .activate();
     }
     
 }
