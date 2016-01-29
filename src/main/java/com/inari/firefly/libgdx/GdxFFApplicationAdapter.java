@@ -61,7 +61,7 @@ public abstract class GdxFFApplicationAdapter extends ApplicationAdapter impleme
     }
 
     private void clearIntro( FFContext context ) {
-        context.getSystem( EntitySystem.SYSTEM_KEY ).deleteAll();
+        context.getSystem( EntitySystem.SYSTEM_KEY ).deleteAllActive();
         context.deleteSystemComponent( Asset.TYPE_KEY, BuildInariIntro.INTRO_TEXTURE );
         context.getSystem( StateSystem.SYSTEM_KEY ).clear();
         context.getSystem( TaskSystem.SYSTEM_KEY ).clear();
