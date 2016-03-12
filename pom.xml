@@ -1,8 +1,8 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <groupId>com.inari</groupId>
-  <artifactId>firefly_libGDX</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
+  <groupId>com.github.inari-soft</groupId>
+  <artifactId>firefly-libgdx</artifactId>
+  <version>1.0-SNAPSHOT</version>
   <build>
     <plugins>
       <plugin>
@@ -50,11 +50,6 @@
   </build>
   <dependencies>
     <dependency>
-    	<groupId>com.inari</groupId>
-    	<artifactId>firefly_lib</artifactId>
-    	<version>0.0.1-SNAPSHOT</version>
-    </dependency>
-    <dependency>
     	<groupId>com.badlogicgames.gdx</groupId>
     	<artifactId>gdx</artifactId>
     	<version>1.6.5</version>
@@ -71,6 +66,11 @@
     	<version>1.6.5</version>
     	<classifier>natives-desktop</classifier>
     	<scope>test</scope>
+    </dependency>
+    <dependency>
+    	<groupId>com.github.inari-soft</groupId>
+    	<artifactId>firefly-lib</artifactId>
+    	<version>1.0-SNAPSHOT</version>
     </dependency>
   </dependencies> 
 </project>
