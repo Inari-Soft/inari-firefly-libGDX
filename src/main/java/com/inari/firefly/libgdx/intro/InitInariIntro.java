@@ -15,7 +15,6 @@ import com.inari.firefly.entity.EntitySystem;
 import com.inari.firefly.graphics.TextureAsset;
 import com.inari.firefly.graphics.sprite.ESprite;
 import com.inari.firefly.graphics.sprite.SpriteAsset;
-import com.inari.firefly.system.FFContext;
 import com.inari.firefly.task.Task;
 
 public final class InitInariIntro extends Task {
@@ -25,7 +24,7 @@ public final class InitInariIntro extends Task {
     }
 
     @Override
-    public final void run( FFContext context ) {
+    public final void runTask() {
         AssetSystem assetSystem = context.getSystem( AssetSystem.SYSTEM_KEY );
         EntitySystem entitySystem = context.getSystem( EntitySystem.SYSTEM_KEY );
         AnimationSystem animationSystem = context.getSystem( AnimationSystem.SYSTEM_KEY );

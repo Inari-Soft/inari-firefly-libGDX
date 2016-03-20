@@ -3,7 +3,6 @@ package com.inari.firefly.libgdx.intro;
 import com.inari.firefly.state.StateChange;
 import com.inari.firefly.state.StateSystem;
 import com.inari.firefly.state.Workflow;
-import com.inari.firefly.system.FFContext;
 import com.inari.firefly.task.Task;
 import com.inari.firefly.task.TaskSystem;
 import com.inari.firefly.task.WorkflowEventTrigger;
@@ -27,7 +26,7 @@ public class BuildInariIntro extends Task {
     }
 
     @Override
-    public void run( FFContext context ) {
+    public void runTask() {
         StateSystem stateSystem = context.getSystem( StateSystem.SYSTEM_KEY );
         TaskSystem taskSystem = context.getSystem( TaskSystem.SYSTEM_KEY );
         
