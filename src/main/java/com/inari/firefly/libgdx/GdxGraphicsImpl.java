@@ -18,6 +18,7 @@ package com.inari.firefly.libgdx;
 import java.util.Iterator;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Pixmap.Format;
@@ -25,6 +26,9 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
+import com.badlogic.gdx.math.Matrix4;
 import com.inari.commons.StringUtils;
 import com.inari.commons.geom.Position;
 import com.inari.commons.geom.Rectangle;
@@ -37,10 +41,12 @@ import com.inari.firefly.graphics.BlendMode;
 import com.inari.firefly.graphics.ShaderAsset;
 import com.inari.firefly.graphics.SpriteRenderable;
 import com.inari.firefly.graphics.TextureAsset;
+import com.inari.firefly.graphics.shape.EShape;
 import com.inari.firefly.graphics.sprite.SpriteAsset;
 import com.inari.firefly.libgdx.filter.ColorFilteredTextureData;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.external.FFGraphics;
+import com.inari.firefly.system.external.TransformData;
 import com.inari.firefly.system.view.View;
 import com.inari.firefly.system.view.ViewEvent;
 
@@ -55,6 +61,8 @@ public final class GdxGraphicsImpl implements FFGraphics {
     private final DynArray<Viewport> viewports;
 
     private final SpriteBatch spriteBatch;
+    private final ShapeRenderer shapeRenderer;
+    private final Matrix4 shapeTransformMatrix;
     
     private Viewport baseViewport = null;
     private View baseView = null;
@@ -66,6 +74,8 @@ public final class GdxGraphicsImpl implements FFGraphics {
         sprites = new DynArray<TextureRegion>( 100, 50 );
         viewports = new DynArray<Viewport>( 50 );
         spriteBatch = new SpriteBatch();
+        shapeRenderer = new ShapeRenderer();
+        shapeTransformMatrix = shapeRenderer.getTransformMatrix();
     }
     
     @Override
@@ -218,23 +228,133 @@ public final class GdxGraphicsImpl implements FFGraphics {
     }
     
     @Override
-    public void renderSprite( SpriteRenderable spriteRenderable, float x, float y, float pivotx, float pivoty, float scalex, float scaley,float rotation ) {
+    public final void renderSprite( SpriteRenderable spriteRenderable, TransformData transformData ) {
         setColorAndBlendMode( spriteRenderable.getTintColor(), spriteRenderable.getBlendMode() );
         TextureRegion sprite = sprites.get( spriteRenderable.getSpriteId() );
-        spriteBatch.draw( sprite, x, y, pivotx, pivoty, sprite.getRegionWidth(), sprite.getRegionHeight(), scalex, scaley, rotation );
+        
+        spriteBatch.draw( 
+            sprite, 
+            transformData.getXOffset(), 
+            transformData.getYOffset(), 
+            transformData.getPivotX(), 
+            transformData.getPivotY(), 
+            sprite.getRegionWidth(), 
+            sprite.getRegionHeight(), 
+            transformData.getScaleX(), 
+            transformData.getScaleY(), 
+            transformData.getRotation() );
     }
 
-    private void setColorAndBlendMode( RGBColor renderColor, BlendMode blendMode ) {
-        spriteBatch.setColor( renderColor.r, renderColor.g, renderColor.b, renderColor.a );
-        if ( currentBlendMode != blendMode ) {
-            currentBlendMode = blendMode;
-            if ( currentBlendMode != BlendMode.NONE ) {
-                spriteBatch.enableBlending();
-                spriteBatch.setBlendFunction( currentBlendMode.gl11SourceConst, currentBlendMode.gl11DestConst );
-            } else {
-                spriteBatch.disableBlending();
+    @Override
+    public final void renderShape( EShape.Type type, float[] vertices, int segments, DynArray<RGBColor> colors, BlendMode blendMode, boolean fill ) {
+        Color color1 = getShapeColor( colors, 0 );
+        Color color2 = getShapeColor( colors, 1 );
+        Color color3 = getShapeColor( colors, 2 );
+        Color color4 = getShapeColor( colors, 3 );
+        shapeRenderer.setColor( color1 );
+        
+        if ( blendMode != null ) {
+            Gdx.gl.glEnable( GL20.GL_BLEND );
+            Gdx.gl.glBlendFunc( blendMode.gl11SourceConst, blendMode.gl11DestConst );
+        }
+        
+        shapeRenderer.begin( ( type == EShape.Type.POINT )? ShapeType.Point : ( fill )? ShapeType.Filled : ShapeType.Line );
+        int index = 0;
+        
+        switch ( type ) {
+            case POINT: {
+                while ( index < vertices.length ) {
+                    shapeRenderer.point( vertices[ index++ ], vertices[ index++ ], 0f );
+                }
+                break;
+            }
+            case LINE: {
+                while ( index < vertices.length ) {
+                    shapeRenderer.line( vertices[ index++ ], vertices[ index++ ], vertices[ index++ ], vertices[ index++ ], color1, color2 );
+                }
+                break;
+            }
+            case POLI_LINE: {
+                shapeRenderer.polyline( vertices );
+                break;
+            }
+            case POLIGON: {
+                shapeRenderer.polygon( vertices );
+                break;
+            }
+            case RECTANGLE: {
+                while ( index < vertices.length ) {
+                    shapeRenderer.rect( vertices[ index++ ], vertices[ index++ ], vertices[ index++ ], vertices[ index++ ], color1, color2, color3, color4 );
+                }
+                break;
+            }
+            case SQUARE: {
+                while ( index < vertices.length ) {
+                    shapeRenderer.rect( 
+                        vertices[ index++ ], vertices[ index++ ], vertices[ index++ ], vertices[ index++ ], 
+                        vertices[ index++ ], vertices[ index++ ], vertices[ index++ ], vertices[ index++ ], 
+                        vertices[ index++ ], color1, color2, color3, color4 
+                    );
+                }
+                break;
+            }
+            case CIRCLE: {
+                while ( index < vertices.length ) {
+                    shapeRenderer.circle( vertices[ index++ ], vertices[ index++ ], vertices[ index++ ], segments );
+                }
+                break;
+            }
+            case CONE: {
+                while ( index < vertices.length ) {
+                    shapeRenderer.cone( vertices[ index++ ], vertices[ index++ ], vertices[ index++ ], vertices[ index++ ], vertices[ index++ ], segments );
+                }
+                break;
+            }
+            case ARC: {
+                while ( index < vertices.length ) {
+                    shapeRenderer.arc( vertices[ index++ ], vertices[ index++ ], vertices[ index++ ], vertices[ index++ ], vertices[ index++ ], segments );
+                }
+                break;
+            }
+            case CURVE: {
+                while ( index < vertices.length ) {
+                    shapeRenderer.curve( 
+                        vertices[ index++ ], vertices[ index++ ], vertices[ index++ ], vertices[ index++ ], 
+                        vertices[ index++ ], vertices[ index++ ], vertices[ index++ ], vertices[ index++ ], segments 
+                    );
+                }
+                break;
+            }
+            case TRIANGLE: {
+                while ( index < vertices.length ) {
+                    shapeRenderer.triangle( 
+                        vertices[ index++ ], vertices[ index++ ], vertices[ index++ ], 
+                        vertices[ index++ ], vertices[ index++ ], vertices[ index++ ], color1, color2, color3 
+                    );
+                }
+                break;
             }
         }
+        
+        shapeRenderer.end();
+        Gdx.gl.glDisable( GL20.GL_BLEND );
+    }
+    
+    @Override
+    public final void renderShape( EShape.Type type, float[] vertices, int segments, DynArray<RGBColor> colors, BlendMode blendMode, boolean fill, TransformData transformData ) {
+        shapeTransformMatrix.translate( transformData.getXOffset(), transformData.getYOffset(), 0f );
+        if ( transformData.hasScale() ) {
+            shapeTransformMatrix.scale( transformData.getScaleX(), transformData.getScaleY(), 0f );
+        }
+        if ( transformData.hasRotation() ) {
+            shapeTransformMatrix.rotate( transformData.getPivotX(), transformData.getPivotY(), 0f, transformData.getRotation() );
+        }
+        shapeRenderer.updateMatrices();
+        
+        renderShape( type, vertices, segments, colors, blendMode, fill );
+        
+        shapeTransformMatrix.idt();
+        shapeRenderer.updateMatrices();
     }
 
     @Override
@@ -331,6 +451,28 @@ public final class GdxGraphicsImpl implements FFGraphics {
     @Override
     public int getScreenHeight() {
         return Gdx.graphics.getHeight();
+    }
+    
+    private Color getShapeColor( DynArray<RGBColor> colors, int index ) {
+        if ( !colors.contains( index ) ) {
+            return shapeRenderer.getColor();
+        }
+        
+        RGBColor rgbColor = colors.get( index );
+        return new Color( rgbColor.r, rgbColor.g, rgbColor.b, rgbColor.a );
+    }
+
+    private void setColorAndBlendMode( RGBColor renderColor, BlendMode blendMode ) {
+        spriteBatch.setColor( renderColor.r, renderColor.g, renderColor.b, renderColor.a );
+        if ( currentBlendMode != blendMode ) {
+            currentBlendMode = blendMode;
+            if ( currentBlendMode != BlendMode.NONE ) {
+                spriteBatch.enableBlending();
+                spriteBatch.setBlendFunction( currentBlendMode.gl11SourceConst, currentBlendMode.gl11DestConst );
+            } else {
+                spriteBatch.disableBlending();
+            }
+        }
     }
 
 }
