@@ -26,9 +26,9 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
+import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
-import com.badlogic.gdx.math.Matrix4;
 import com.inari.commons.StringUtils;
 import com.inari.commons.geom.Position;
 import com.inari.commons.geom.Rectangle;
@@ -59,23 +59,25 @@ public final class GdxGraphicsImpl implements FFGraphics {
     private final DynArray<Texture> textures;
     private final DynArray<TextureRegion> sprites;
     private final DynArray<Viewport> viewports;
+    private final DynArray<ShaderProgram> shaders;
 
     private final SpriteBatch spriteBatch;
-    private final ShapeRenderer shapeRenderer;
-    private final Matrix4 shapeTransformMatrix;
+    private ShapeRenderer shapeRenderer;
     
     private Viewport baseViewport = null;
     private View baseView = null;
     private Viewport activeViewport = null;
+    private int activeShaderId = -1;
+    private int activeShapeShaderId = -1;
     private BlendMode currentBlendMode = BlendMode.NONE;
     
     GdxGraphicsImpl() {
         textures = new DynArray<Texture>( 100 );
         sprites = new DynArray<TextureRegion>( 100, 50 );
         viewports = new DynArray<Viewport>( 50 );
+        shaders = new DynArray<ShaderProgram>();
         spriteBatch = new SpriteBatch();
         shapeRenderer = new ShapeRenderer();
-        shapeTransformMatrix = shapeRenderer.getTransformMatrix();
     }
     
     @Override
@@ -194,29 +196,52 @@ public final class GdxGraphicsImpl implements FFGraphics {
     public final void disposeSprite( int spriteId ) {
         sprites.remove( spriteId );
     }
-
-    @Override
-    public final int createShader( String shaderProgram ) {
-        // TODO
-        throw new UnsupportedOperationException( "TODO" );
-    }
     
     @Override
     public final int createShader( ShaderAsset shaderAsset ) {
-        // TODO
-        throw new UnsupportedOperationException( "TODO" );
+        String vertexShader = shaderAsset.getVertexShaderProgram();
+        String fragmentShader = shaderAsset.getFragmentShaderProgram();
+        
+        if ( vertexShader == null ) {
+            try {
+                vertexShader = Gdx.files.internal( shaderAsset.getVertexShaderResourceName() ).readString();
+            } catch ( Exception e ) {
+                throw new FFInitException( "Failed to load vertex shader from resource: " + shaderAsset.getVertexShaderResourceName(), e );
+            }
+        }
+        
+        if ( fragmentShader == null ) {
+            try {
+                fragmentShader = Gdx.files.internal( shaderAsset.getFragmentShaderResourceName() ).readString();
+            } catch ( Exception e ) {
+                throw new FFInitException( "Failed to load fragment shader from resource: " + shaderAsset.getFragmentShaderResourceName(), e );
+            }
+        }
+        
+        ShaderProgram shaderProgram = new ShaderProgram( vertexShader, fragmentShader );
+        if ( shaderProgram.isCompiled() ) {
+            String compileLog = shaderProgram.getLog();
+            System.out.println( "Shader Compiled: " + compileLog );
+        } else {
+            throw new FFInitException( "ShaderAsset with id: " + shaderAsset.getId() + " and name: " + shaderAsset.getName() + " failed to compile:" + shaderProgram.getLog() );
+        }
+        
+        return shaders.add( shaderProgram );
     }
 
     @Override
     public final void disposeShader( int shaderId ) {
-        // TODO
-        throw new UnsupportedOperationException( "TODO" );
+        ShaderProgram shaderProgram = shaders.remove( shaderId );
+        
+        if ( shaderProgram != null ) {
+            shaderProgram.dispose();
+        }
     }
 
     @Override
     public final void startRendering( View view ) {
         activeViewport = viewports.get( view.index() );
-        activeViewport.activate( spriteBatch, view );
+        activeViewport.activate( spriteBatch, shapeRenderer, view );
         spriteBatch.begin();
     }
 
@@ -224,13 +249,15 @@ public final class GdxGraphicsImpl implements FFGraphics {
     public final void renderSprite( SpriteRenderable spriteRenderable, float xpos, float ypos ) {
         setColorAndBlendMode( spriteRenderable.getTintColor(), spriteRenderable.getBlendMode() );
         TextureRegion sprite = sprites.get( spriteRenderable.getSpriteId() );
+        setShaderForSpriteBatch( spriteRenderable );
         spriteBatch.draw( sprite, xpos, ypos );
     }
-    
+
     @Override
     public final void renderSprite( SpriteRenderable spriteRenderable, TransformData transformData ) {
         setColorAndBlendMode( spriteRenderable.getTintColor(), spriteRenderable.getBlendMode() );
         TextureRegion sprite = sprites.get( spriteRenderable.getSpriteId() );
+        setShaderForSpriteBatch( spriteRenderable );
         
         spriteBatch.draw( 
             sprite, 
@@ -246,19 +273,29 @@ public final class GdxGraphicsImpl implements FFGraphics {
     }
 
     @Override
-    public final void renderShape( EShape.Type type, float[] vertices, int segments, DynArray<RGBColor> colors, BlendMode blendMode, boolean fill ) {
+    public final void renderShape( EShape.Type type, float[] vertices, int segments, DynArray<RGBColor> colors, BlendMode blendMode, boolean fill, int shaderId ) {
+        if ( shaderId != activeShapeShaderId ) {
+            if ( shaderId < 0 ) {
+                shapeRenderer = new ShapeRenderer();
+            } else {
+                ShaderProgram shaderProgram = shaders.get( shaderId );
+                shapeRenderer = new ShapeRenderer( 1000, shaderProgram );
+            }
+        }
+        
         Color color1 = getShapeColor( colors, 0 );
         Color color2 = getShapeColor( colors, 1 );
         Color color3 = getShapeColor( colors, 2 );
         Color color4 = getShapeColor( colors, 3 );
         shapeRenderer.setColor( color1 );
+        ShapeType shapeType = ( type == EShape.Type.POINT )? ShapeType.Point : ( fill )? ShapeType.Filled : ShapeType.Line;
+        shapeRenderer.begin( shapeType );
         
         if ( blendMode != null ) {
             Gdx.gl.glEnable( GL20.GL_BLEND );
+            Gdx.gl.glBlendColor( 1f, 1f, 1f, 1f );
             Gdx.gl.glBlendFunc( blendMode.gl11SourceConst, blendMode.gl11DestConst );
         }
-        
-        shapeRenderer.begin( ( type == EShape.Type.POINT )? ShapeType.Point : ( fill )? ShapeType.Filled : ShapeType.Line );
         int index = 0;
         
         switch ( type ) {
@@ -285,16 +322,6 @@ public final class GdxGraphicsImpl implements FFGraphics {
             case RECTANGLE: {
                 while ( index < vertices.length ) {
                     shapeRenderer.rect( vertices[ index++ ], vertices[ index++ ], vertices[ index++ ], vertices[ index++ ], color1, color2, color3, color4 );
-                }
-                break;
-            }
-            case SQUARE: {
-                while ( index < vertices.length ) {
-                    shapeRenderer.rect( 
-                        vertices[ index++ ], vertices[ index++ ], vertices[ index++ ], vertices[ index++ ], 
-                        vertices[ index++ ], vertices[ index++ ], vertices[ index++ ], vertices[ index++ ], 
-                        vertices[ index++ ], color1, color2, color3, color4 
-                    );
                 }
                 break;
             }
@@ -336,25 +363,28 @@ public final class GdxGraphicsImpl implements FFGraphics {
             }
         }
         
+        shapeRenderer.flush();
         shapeRenderer.end();
+        
         Gdx.gl.glDisable( GL20.GL_BLEND );
     }
     
     @Override
-    public final void renderShape( EShape.Type type, float[] vertices, int segments, DynArray<RGBColor> colors, BlendMode blendMode, boolean fill, TransformData transformData ) {
-        shapeTransformMatrix.translate( transformData.getXOffset(), transformData.getYOffset(), 0f );
+    public final void renderShape( EShape.Type type, float[] vertices, int segments, DynArray<RGBColor> colors, BlendMode blendMode, boolean fill, int shaderId, TransformData transformData ) {
+        shapeRenderer.identity();
+        shapeRenderer.translate( transformData.getXOffset(), transformData.getYOffset(), 0f );
         if ( transformData.hasScale() ) {
-            shapeTransformMatrix.scale( transformData.getScaleX(), transformData.getScaleY(), 0f );
+            shapeRenderer.translate( transformData.getPivotX(), transformData.getPivotY(), 0f );
+            shapeRenderer.scale( transformData.getScaleX(), transformData.getScaleY(), 0f );
+            shapeRenderer.translate( -transformData.getPivotX(), -transformData.getPivotY(), 0f );
         }
         if ( transformData.hasRotation() ) {
-            shapeTransformMatrix.rotate( transformData.getPivotX(), transformData.getPivotY(), 0f, transformData.getRotation() );
+            shapeRenderer.translate( transformData.getPivotX(), transformData.getPivotY(), 0f );
+            shapeRenderer.rotate( 0f, 0f, 1f, transformData.getRotation() );
+            shapeRenderer.translate( -transformData.getPivotX(), -transformData.getPivotY(), 0f );
         }
-        shapeRenderer.updateMatrices();
-        
-        renderShape( type, vertices, segments, colors, blendMode, fill );
-        
-        shapeTransformMatrix.idt();
-        shapeRenderer.updateMatrices();
+
+        renderShape( type, vertices, segments, colors, blendMode, fill, shaderId );
     }
 
     @Override
@@ -371,7 +401,7 @@ public final class GdxGraphicsImpl implements FFGraphics {
     public final void flush( Iterator<View> virtualViews ) {
         if ( virtualViews != null && virtualViews.hasNext() ) {
             
-            baseViewport.activate( spriteBatch, baseView );
+            baseViewport.activate( spriteBatch, shapeRenderer, baseView );
             spriteBatch.begin();
             
             while ( virtualViews.hasNext() ) {
@@ -422,7 +452,7 @@ public final class GdxGraphicsImpl implements FFGraphics {
             }
         }
 
-        final void activate( SpriteBatch spriteBatch, View view ) {
+        final void activate( SpriteBatch spriteBatch, ShapeRenderer shapeRenderer, View view ) {
             Position worldPosition = view.getWorldPosition();
             float zoom = view.getZoom();
             RGBColor clearColor = view.getClearColor();
@@ -433,13 +463,14 @@ public final class GdxGraphicsImpl implements FFGraphics {
             camera.position.y = camera.position.y + worldPosition.y;
             camera.update();
             spriteBatch.setProjectionMatrix( camera.combined );
+            shapeRenderer.setProjectionMatrix( camera.combined );
             
             if ( fbo != null ) {
                 fbo.begin();
             }
             
-            Gdx.graphics.getGL20().glClearColor( clearColor.r, clearColor.g, clearColor.b, clearColor.a );
-            Gdx.graphics.getGL20().glClear( GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT );
+            Gdx.gl.glClearColor( clearColor.r, clearColor.g, clearColor.b, clearColor.a );
+            Gdx.gl.glClear( GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT );
         }
     }
 
@@ -471,6 +502,20 @@ public final class GdxGraphicsImpl implements FFGraphics {
                 spriteBatch.setBlendFunction( currentBlendMode.gl11SourceConst, currentBlendMode.gl11DestConst );
             } else {
                 spriteBatch.disableBlending();
+            }
+        }
+    }
+    
+    private void setShaderForSpriteBatch( SpriteRenderable spriteRenderable ) {
+        int shaderId = spriteRenderable.getShaderId();
+        if ( shaderId != activeShaderId ) {
+            if ( shaderId < 0 ) {
+                spriteBatch.setShader( null );
+                activeShaderId = -1;
+            } else {
+                ShaderProgram shaderProgram = shaders.get( shaderId );
+                spriteBatch.setShader( shaderProgram );
+                activeShaderId = shaderId;
             }
         }
     }
