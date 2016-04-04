@@ -12,7 +12,7 @@ public final class GdxFirefly extends FireFly {
     }
 
     public interface DynamicAttributes {
-        public static final AttributeKey<String> TEXTURE_COLOR_FILTER_NAME = new AttributeKey<String>( "TEXTURE_COLOR_FILTER_NAME", String.class, TextureAsset.class );
+        public static final AttributeKey<String> TEXTURE_COLOR_CONVERTER_NAME = new AttributeKey<String>( "TEXTURE_COLOR_CONVERTER_NAME", String.class, TextureAsset.class );
     }
 
 }

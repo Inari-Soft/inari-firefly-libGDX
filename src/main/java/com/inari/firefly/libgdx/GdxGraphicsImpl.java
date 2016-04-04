@@ -34,9 +34,9 @@ import com.inari.commons.geom.Position;
 import com.inari.commons.geom.Rectangle;
 import com.inari.commons.graphics.RGBColor;
 import com.inari.commons.lang.TypedKey;
+import com.inari.commons.lang.convert.IntValueConverter;
 import com.inari.commons.lang.list.DynArray;
 import com.inari.firefly.FFInitException;
-import com.inari.firefly.filter.IColorFilter;
 import com.inari.firefly.graphics.BlendMode;
 import com.inari.firefly.graphics.ShaderAsset;
 import com.inari.firefly.graphics.SpriteRenderable;
@@ -140,12 +140,12 @@ public final class GdxGraphicsImpl implements FFGraphics {
     public final int createTexture( TextureAsset asset ) {
         Texture texture = null;
         int textureId = -1;
-        String colorFilterName = asset.getDynamicAttribute( GdxFirefly.DynamicAttributes.TEXTURE_COLOR_FILTER_NAME );
+        String colorFilterName = asset.getDynamicAttribute( GdxFirefly.DynamicAttributes.TEXTURE_COLOR_CONVERTER_NAME );
         if ( !StringUtils.isBlank( colorFilterName ) ) {
-            TypedKey<IColorFilter> filterKey = TypedKey.create( colorFilterName, IColorFilter.class );
-            IColorFilter colorFilter = context.getProperty( filterKey );
-            if ( colorFilter != null ) {
-                ColorFilteredTextureData textureData = new ColorFilteredTextureData( asset.getResourceName(), colorFilter );
+            TypedKey<IntValueConverter> filterKey = TypedKey.create( colorFilterName, IntValueConverter.class );
+            IntValueConverter colorConverter = context.getProperty( filterKey );
+            if ( colorConverter != null ) {
+                ColorFilteredTextureData textureData = new ColorFilteredTextureData( asset.getResourceName(), colorConverter );
                 texture = new Texture( textureData );
                 textureId = textures.add( texture );
             }
