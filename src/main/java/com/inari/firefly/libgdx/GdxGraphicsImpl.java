@@ -40,12 +40,13 @@ import com.inari.firefly.FFInitException;
 import com.inari.firefly.graphics.BlendMode;
 import com.inari.firefly.graphics.ShaderAsset;
 import com.inari.firefly.graphics.SpriteRenderable;
-import com.inari.firefly.graphics.TextureAsset;
 import com.inari.firefly.graphics.shape.EShape;
-import com.inari.firefly.graphics.sprite.SpriteAsset;
 import com.inari.firefly.libgdx.filter.ColorFilteredTextureData;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.external.FFGraphics;
+import com.inari.firefly.system.external.ShapeData;
+import com.inari.firefly.system.external.SpriteData;
+import com.inari.firefly.system.external.TextureData;
 import com.inari.firefly.system.external.TransformData;
 import com.inari.firefly.system.view.View;
 import com.inari.firefly.system.view.ViewEvent;
@@ -137,34 +138,29 @@ public final class GdxGraphicsImpl implements FFGraphics {
 
     // TODO make it simpler
     @Override
-    public final int createTexture( TextureAsset asset ) {
+    public final int createTexture( TextureData data ) {
         Texture texture = null;
         int textureId = -1;
-        String colorFilterName = asset.getDynamicAttribute( GdxFirefly.DynamicAttributes.TEXTURE_COLOR_CONVERTER_NAME );
+        String colorFilterName = data.getDynamicAttribute( GdxFirefly.DynamicAttributes.TEXTURE_COLOR_CONVERTER_NAME );
         if ( !StringUtils.isBlank( colorFilterName ) ) {
             TypedKey<IntValueConverter> filterKey = TypedKey.create( colorFilterName, IntValueConverter.class );
             IntValueConverter colorConverter = context.getProperty( filterKey );
             if ( colorConverter != null ) {
-                ColorFilteredTextureData textureData = new ColorFilteredTextureData( asset.getResourceName(), colorConverter );
+                ColorFilteredTextureData textureData = new ColorFilteredTextureData( data.getResourceName(), colorConverter );
                 texture = new Texture( textureData );
                 textureId = textures.add( texture );
             }
         } 
         
         if ( textureId < 0 ) {
-            textureId = createTexture( asset.getResourceName() );
-            texture = textures.get( textureId );
+            texture = new Texture( Gdx.files.internal( data.getResourceName() ) );
+            textureId = textures.add( texture );
         }
         
-        asset.setWidth( texture.getWidth() );
-        asset.setHeight( texture.getHeight() );
+        data.setTextureWidth( texture.getWidth() );
+        data.setTextureHeight( texture.getHeight() );
 
         return textureId;
-    }
-    
-    @Override
-    public final int createTexture( String resourceName ) {
-        return textures.add( new Texture( Gdx.files.internal( resourceName ) ) );
     }
 
     @Override
@@ -174,7 +170,9 @@ public final class GdxGraphicsImpl implements FFGraphics {
     }
 
     @Override
-    public final int createSprite( int textureId, Rectangle textureRegion ) {
+    public final int createSprite( SpriteData data ) {
+        int textureId = data.getTextureId();
+        Rectangle textureRegion = data.getTextureRegion();
         if ( !textures.contains( textureId ) ) {
             throw new FFInitException( "Texture with id: " + textureId + "not loaded" );
         }
@@ -185,11 +183,6 @@ public final class GdxGraphicsImpl implements FFGraphics {
         
         
         return sprites.add( sprite );
-    }
-    
-    @Override
-    public final int createSprite( SpriteAsset asset ) {
-        return createSprite( asset.getTextureId(), asset.getTextureRegion() );
     }
 
     @Override
@@ -273,7 +266,8 @@ public final class GdxGraphicsImpl implements FFGraphics {
     }
 
     @Override
-    public final void renderShape( EShape.Type type, float[] vertices, int segments, DynArray<RGBColor> colors, BlendMode blendMode, boolean fill, int shaderId ) {
+    public final void renderShape( ShapeData data ) {
+        int shaderId = data.getShaderId();
         if ( shaderId != activeShapeShaderId ) {
             if ( shaderId < 0 ) {
                 shapeRenderer = new ShapeRenderer();
@@ -283,14 +277,20 @@ public final class GdxGraphicsImpl implements FFGraphics {
             }
         }
         
+        DynArray<RGBColor> colors = data.getColors();
         Color color1 = getShapeColor( colors, 0 );
         Color color2 = getShapeColor( colors, 1 );
         Color color3 = getShapeColor( colors, 2 );
         Color color4 = getShapeColor( colors, 3 );
         shapeRenderer.setColor( color1 );
-        ShapeType shapeType = ( type == EShape.Type.POINT )? ShapeType.Point : ( fill )? ShapeType.Filled : ShapeType.Line;
-        shapeRenderer.begin( shapeType );
         
+        ShapeData.Type type = data.getShapeType();
+        ShapeType shapeType = ( type == EShape.Type.POINT )? ShapeType.Point : ( data.isFill() )? ShapeType.Filled : ShapeType.Line;
+        shapeRenderer.begin( shapeType );
+
+        BlendMode blendMode = data.getBlendMode();
+        float[] vertices = data.getVertices();
+        int segments = data.getSegments();
         if ( blendMode != null ) {
             Gdx.gl.glEnable( GL20.GL_BLEND );
             Gdx.gl.glBlendColor( 1f, 1f, 1f, 1f );
@@ -370,7 +370,7 @@ public final class GdxGraphicsImpl implements FFGraphics {
     }
     
     @Override
-    public final void renderShape( EShape.Type type, float[] vertices, int segments, DynArray<RGBColor> colors, BlendMode blendMode, boolean fill, int shaderId, TransformData transformData ) {
+    public final void renderShape( ShapeData data, TransformData transformData ) {
         shapeRenderer.identity();
         shapeRenderer.translate( transformData.getXOffset(), transformData.getYOffset(), 0f );
         if ( transformData.hasScale() ) {
@@ -384,7 +384,7 @@ public final class GdxGraphicsImpl implements FFGraphics {
             shapeRenderer.translate( -transformData.getPivotX(), -transformData.getPivotY(), 0f );
         }
 
-        renderShape( type, vertices, segments, colors, blendMode, fill, shaderId );
+        renderShape( data );
     }
 
     @Override

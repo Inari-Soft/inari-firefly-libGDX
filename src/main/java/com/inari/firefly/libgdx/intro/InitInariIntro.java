@@ -48,13 +48,13 @@ public final class InitInariIntro extends Task {
         assetSystem .getAssetBuilder()
             .set( SpriteAsset.NAME, BuildInariIntro.INTRO_SPRITE )
             .set( SpriteAsset.TEXTURE_ASSET_ID, assetSystem.getAssetId( BuildInariIntro.INTRO_TEXTURE ) )
-            .set( SpriteAsset.TEXTURE_REGION, new Rectangle( 0, 0, textureAsset.getWidth(), textureAsset.getHeight() ) )
+            .set( SpriteAsset.TEXTURE_REGION, new Rectangle( 0, 0, textureAsset.getTextureWidth(), textureAsset.getTextureHeight() ) )
         .activate( SpriteAsset.class );
         
         entitySystem.getEntityBuilder()
             .set( ETransform.VIEW_ID, 0 )
-            .set( ETransform.XPOSITION, context.getScreenWidth() / 2 - textureAsset.getWidth() / 2 )
-            .set( ETransform.YPOSITION, context.getScreenHeight() / 2 - textureAsset.getHeight() / 2 )
+            .set( ETransform.XPOSITION, context.getScreenWidth() / 2 - textureAsset.getTextureWidth() / 2 )
+            .set( ETransform.YPOSITION, context.getScreenHeight() / 2 - textureAsset.getTextureHeight() / 2 )
             .set( ESprite.SPRITE_ID, assetSystem.getAssetInstanceId( BuildInariIntro.INTRO_SPRITE ) )
             .set( ESprite.TINT_COLOR, new RGBColor( 1f, 1f, 1f, 0f ) )
             .add( EEntity.CONTROLLER_IDS, 0 )

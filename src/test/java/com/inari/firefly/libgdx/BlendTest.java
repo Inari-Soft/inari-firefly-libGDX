@@ -124,8 +124,6 @@ public class BlendTest extends GdxFFApplicationAdapter {
             config.resizable = true;
             config.width = 800;
             config.height = 600;
-            config.foregroundFPS = 170;
-            config.backgroundFPS = 60;
             new LwjglApplication( new BlendTest(), config );
         } catch ( Throwable t ) {
             t.printStackTrace();
