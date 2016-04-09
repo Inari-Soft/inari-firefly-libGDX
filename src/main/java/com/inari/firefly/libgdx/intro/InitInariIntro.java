@@ -33,7 +33,7 @@ public final class InitInariIntro extends Task {
         animationSystem.getAnimationBuilder()
             .set( ColorEasingAnimation.NAME, BuildInariIntro.INTRO_ANIMATION )
             .set( ColorEasingAnimation.LOOPING, false )
-            .set( ColorEasingAnimation.EASING_DATA_ALPHA, new EasingData( Easing.Type.LINEAR, 0.0f, 1.0f, 1000 ) )
+            .set( ColorEasingAnimation.EASING_DATA_ALPHA, new EasingData( Easing.Type.LINEAR, 0.0f, 1.0f, 500 ) )
         .activate( ColorEasingAnimation.class );
         
         controllerSystem.getControllerBuilder()
@@ -47,7 +47,7 @@ public final class InitInariIntro extends Task {
         TextureAsset textureAsset = assetSystem.getAssetAs( BuildInariIntro.INTRO_TEXTURE, TextureAsset.class );
         assetSystem .getAssetBuilder()
             .set( SpriteAsset.NAME, BuildInariIntro.INTRO_SPRITE )
-            .set( SpriteAsset.TEXTURE_ASSET_ID, assetSystem.getAssetId( BuildInariIntro.INTRO_TEXTURE ) )
+            .set( SpriteAsset.TEXTURE_ASSET_NAME, BuildInariIntro.INTRO_TEXTURE )
             .set( SpriteAsset.TEXTURE_REGION, new Rectangle( 0, 0, textureAsset.getTextureWidth(), textureAsset.getTextureHeight() ) )
         .activate( SpriteAsset.class );
         
@@ -55,7 +55,7 @@ public final class InitInariIntro extends Task {
             .set( ETransform.VIEW_ID, 0 )
             .set( ETransform.XPOSITION, context.getScreenWidth() / 2 - textureAsset.getTextureWidth() / 2 )
             .set( ETransform.YPOSITION, context.getScreenHeight() / 2 - textureAsset.getTextureHeight() / 2 )
-            .set( ESprite.SPRITE_ID, assetSystem.getAssetInstanceId( BuildInariIntro.INTRO_SPRITE ) )
+            .set( ESprite.SPRITE_ASSET_NAME, BuildInariIntro.INTRO_SPRITE )
             .set( ESprite.TINT_COLOR, new RGBColor( 1f, 1f, 1f, 0f ) )
             .add( EEntity.CONTROLLER_IDS, 0 )
         .activate();

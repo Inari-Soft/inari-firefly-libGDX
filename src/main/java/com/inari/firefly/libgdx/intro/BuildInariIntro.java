@@ -5,7 +5,7 @@ import com.inari.firefly.state.StateSystem;
 import com.inari.firefly.state.Workflow;
 import com.inari.firefly.task.Task;
 import com.inari.firefly.task.TaskSystem;
-import com.inari.firefly.task.WorkflowEventTrigger;
+import com.inari.firefly.task.WorkflowTaskTrigger;
 
 public class BuildInariIntro extends Task {
     
@@ -33,11 +33,11 @@ public class BuildInariIntro extends Task {
         taskSystem.getTaskBuilder()
             .set( Task.NAME, INTRO_START_TASK )
             .set( Task.REMOVE_AFTER_RUN, true ) 
-            .add( 
-                Task.TRIGGERS, 
-                new WorkflowEventTrigger( 
+            .set( 
+                Task.TRIGGER, 
+                new WorkflowTaskTrigger( 
                     INTRO_WORKFLOW, 
-                    WorkflowEventTrigger.Type.ENTER_STATE, 
+                    WorkflowTaskTrigger.Type.ENTER_STATE, 
                     INTRO_START_STATE
                 ) 
             )
