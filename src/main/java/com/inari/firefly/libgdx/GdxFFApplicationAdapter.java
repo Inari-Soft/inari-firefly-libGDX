@@ -11,6 +11,7 @@ import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.dynattr.DynamicAttribueMapper;
 import com.inari.firefly.control.ControllerSystem;
 import com.inari.firefly.entity.EntitySystem;
+import com.inari.firefly.graphics.text.FontAsset;
 import com.inari.firefly.libgdx.intro.BuildInariIntro;
 import com.inari.firefly.state.StateSystem;
 import com.inari.firefly.state.WorkflowEvent;
@@ -53,11 +54,27 @@ public abstract class GdxFFApplicationAdapter extends ApplicationAdapter impleme
             
             FFContext context = firefly.getContext();
             clearIntro( context );
-            
+            loadDefaultFontAsset( context );
             init( context );
             
             context.disposeListener( WorkflowEvent.class, this );
         }
+    }
+
+    private void loadDefaultFontAsset( FFContext context ) {
+        context.getComponentBuilder( Asset.TYPE_KEY )
+            .set( FontAsset.NAME, FFContext.DEFAULT_FONT )
+            .set( FontAsset.TEXTURE_RESOURCE_NAME, "firefly/fireflyMicroFont.png" )
+            .set( FontAsset.CHAR_WIDTH, 8 )
+            .set( FontAsset.CHAR_HEIGHT, 16 )
+            .set( FontAsset.CHAR_SPACE, 0 )
+            .set( FontAsset.LINE_SPACE, 0 )
+            .set( FontAsset.CHAR_TEXTURE_MAP, new char[][] {
+                { 'a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z',' ' },
+                { 'A','B','C','D','E','F','G','H','I','J','J','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z',' ' },
+                { '1','2','3','4','5','6','7','8','9','0','!','@','£','$','%','?','&','*','(',')','-','+','=','"','.',',',':' }
+            } )
+            .activate( FontAsset.class );
     }
 
     private void clearIntro( FFContext context ) {

@@ -286,6 +286,12 @@ public final class GdxGraphicsImpl implements FFGraphics {
         
         ShapeData.Type type = data.getShapeType();
         ShapeType shapeType = ( type == EShape.Type.POINT )? ShapeType.Point : ( data.isFill() )? ShapeType.Filled : ShapeType.Line;
+        
+        boolean restartSpriteBatch = false;
+        if ( spriteBatch.isDrawing() ) {
+            restartSpriteBatch = true;
+            spriteBatch.end();
+        }
         shapeRenderer.begin( shapeType );
 
         BlendMode blendMode = data.getBlendMode();
@@ -365,6 +371,10 @@ public final class GdxGraphicsImpl implements FFGraphics {
         
         shapeRenderer.flush();
         shapeRenderer.end();
+        
+        if ( restartSpriteBatch ) {
+            spriteBatch.begin();
+        }
         
         Gdx.gl.glDisable( GL20.GL_BLEND );
     }
