@@ -5,23 +5,23 @@ import java.util.Collection;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
-import com.inari.firefly.animation.AnimationSystem;
 import com.inari.firefly.asset.Asset;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.dynattr.DynamicAttribueMapper;
 import com.inari.firefly.control.ControllerSystem;
+import com.inari.firefly.control.state.StateSystem;
+import com.inari.firefly.control.state.WorkflowEvent;
+import com.inari.firefly.control.state.WorkflowEventListener;
+import com.inari.firefly.control.task.Task;
+import com.inari.firefly.control.task.TaskSystem;
+import com.inari.firefly.control.task.TaskSystemEvent;
+import com.inari.firefly.control.task.TaskSystemEvent.Type;
 import com.inari.firefly.entity.EntitySystem;
 import com.inari.firefly.graphics.text.FontAsset;
 import com.inari.firefly.libgdx.intro.BuildInariIntro;
-import com.inari.firefly.state.StateSystem;
-import com.inari.firefly.state.WorkflowEvent;
-import com.inari.firefly.state.WorkflowEventListener;
+import com.inari.firefly.physics.animation.AnimationSystem;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.FireFly;
-import com.inari.firefly.task.Task;
-import com.inari.firefly.task.TaskSystem;
-import com.inari.firefly.task.TaskSystemEvent;
-import com.inari.firefly.task.TaskSystemEvent.Type;
 
 public abstract class GdxFFApplicationAdapter extends ApplicationAdapter implements WorkflowEventListener {
 

@@ -12,9 +12,9 @@ import com.inari.firefly.graphics.shape.ShapeRenderSystem;
 import com.inari.firefly.graphics.sprite.SpriteViewSystem;
 import com.inari.firefly.graphics.text.EText;
 import com.inari.firefly.graphics.text.TextSystem;
+import com.inari.firefly.graphics.view.Layer;
+import com.inari.firefly.graphics.view.View;
 import com.inari.firefly.system.FFContext;
-import com.inari.firefly.system.view.Layer;
-import com.inari.firefly.system.view.View;
 
 public class OverlapViewTest extends GdxFFApplicationAdapter {
     

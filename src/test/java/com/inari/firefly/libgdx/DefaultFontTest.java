@@ -6,8 +6,8 @@ import com.inari.commons.graphics.RGBColor;
 import com.inari.firefly.entity.ETransform;
 import com.inari.firefly.graphics.text.EText;
 import com.inari.firefly.graphics.text.TextSystem;
+import com.inari.firefly.graphics.view.View;
 import com.inari.firefly.system.FFContext;
-import com.inari.firefly.system.view.View;
 
 public class DefaultFontTest extends GdxFFApplicationAdapter{
     

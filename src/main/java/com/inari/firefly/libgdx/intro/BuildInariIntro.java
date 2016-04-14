@@ -1,11 +1,11 @@
 package com.inari.firefly.libgdx.intro;
 
-import com.inari.firefly.state.StateChange;
-import com.inari.firefly.state.StateSystem;
-import com.inari.firefly.state.Workflow;
-import com.inari.firefly.task.Task;
-import com.inari.firefly.task.TaskSystem;
-import com.inari.firefly.task.WorkflowTaskTrigger;
+import com.inari.firefly.control.state.StateChange;
+import com.inari.firefly.control.state.StateSystem;
+import com.inari.firefly.control.state.Workflow;
+import com.inari.firefly.control.task.Task;
+import com.inari.firefly.control.task.TaskSystem;
+import com.inari.firefly.control.task.WorkflowTaskTrigger;
 
 public class BuildInariIntro extends Task {
     

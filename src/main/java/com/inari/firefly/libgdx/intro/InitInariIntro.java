@@ -3,11 +3,11 @@ package com.inari.firefly.libgdx.intro;
 import com.inari.commons.geom.Easing;
 import com.inari.commons.geom.Rectangle;
 import com.inari.commons.graphics.RGBColor;
-import com.inari.firefly.animation.AnimationSystem;
 import com.inari.firefly.animation.easing.ColorEasingAnimation;
 import com.inari.firefly.animation.easing.EasingData;
 import com.inari.firefly.asset.AssetSystem;
 import com.inari.firefly.control.ControllerSystem;
+import com.inari.firefly.control.task.Task;
 import com.inari.firefly.controller.entity.SpriteTintColorAnimationController;
 import com.inari.firefly.entity.EEntity;
 import com.inari.firefly.entity.ETransform;
@@ -15,7 +15,7 @@ import com.inari.firefly.entity.EntitySystem;
 import com.inari.firefly.graphics.TextureAsset;
 import com.inari.firefly.graphics.sprite.ESprite;
 import com.inari.firefly.graphics.sprite.SpriteAsset;
-import com.inari.firefly.task.Task;
+import com.inari.firefly.physics.animation.AnimationSystem;
 
 public final class InitInariIntro extends Task {
 

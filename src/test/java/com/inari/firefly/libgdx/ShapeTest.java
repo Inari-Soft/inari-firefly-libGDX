@@ -8,8 +8,8 @@ import com.inari.firefly.entity.EntitySystem;
 import com.inari.firefly.graphics.BlendMode;
 import com.inari.firefly.graphics.shape.EShape;
 import com.inari.firefly.graphics.shape.ShapeRenderSystem;
+import com.inari.firefly.graphics.view.View;
 import com.inari.firefly.system.FFContext;
-import com.inari.firefly.system.view.View;
 
 public class ShapeTest extends GdxFFApplicationAdapter {
 
