@@ -216,7 +216,7 @@ public final class GdxGraphicsImpl implements FFGraphics {
             String compileLog = shaderProgram.getLog();
             System.out.println( "Shader Compiled: " + compileLog );
         } else {
-            throw new FFInitException( "ShaderAsset with id: " + shaderAsset.getId() + " and name: " + shaderAsset.getName() + " failed to compile:" + shaderProgram.getLog() );
+            throw new FFInitException( "ShaderAsset with id: " + shaderAsset.index() + " and name: " + shaderAsset.getName() + " failed to compile:" + shaderProgram.getLog() );
         }
         
         return shaders.add( shaderProgram );
