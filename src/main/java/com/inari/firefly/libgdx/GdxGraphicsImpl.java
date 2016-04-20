@@ -232,9 +232,9 @@ public final class GdxGraphicsImpl implements FFGraphics {
     }
 
     @Override
-    public final void startRendering( View view ) {
+    public final void startRendering( View view, boolean clear ) {
         activeViewport = viewports.get( view.index() );
-        activeViewport.activate( spriteBatch, shapeRenderer, view );
+        activeViewport.activate( spriteBatch, shapeRenderer, view, clear );
         spriteBatch.begin();
     }
 
@@ -411,7 +411,7 @@ public final class GdxGraphicsImpl implements FFGraphics {
     public final void flush( Iterator<View> virtualViews ) {
         if ( virtualViews != null && virtualViews.hasNext() ) {
             
-            baseViewport.activate( spriteBatch, shapeRenderer, baseView );
+            baseViewport.activate( spriteBatch, shapeRenderer, baseView, true );
             spriteBatch.begin();
             
             while ( virtualViews.hasNext() ) {
@@ -426,6 +426,7 @@ public final class GdxGraphicsImpl implements FFGraphics {
         }
         
         spriteBatch.flush();
+        currentBlendMode = BlendMode.NONE;
     }
 
     private Viewport createBaseViewport( View view ) {
@@ -462,7 +463,7 @@ public final class GdxGraphicsImpl implements FFGraphics {
             }
         }
 
-        final void activate( SpriteBatch spriteBatch, ShapeRenderer shapeRenderer, View view ) {
+        final void activate( SpriteBatch spriteBatch, ShapeRenderer shapeRenderer, View view, boolean clear ) {
             Position worldPosition = view.getWorldPosition();
             float zoom = view.getZoom();
             RGBColor clearColor = view.getClearColor();
@@ -479,8 +480,10 @@ public final class GdxGraphicsImpl implements FFGraphics {
                 fbo.begin();
             }
             
-            Gdx.gl.glClearColor( clearColor.r, clearColor.g, clearColor.b, clearColor.a );
-            Gdx.gl.glClear( GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT );
+            if ( clear ) {
+                Gdx.gl.glClearColor( clearColor.r, clearColor.g, clearColor.b, clearColor.a );
+                Gdx.gl.glClear( GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT );
+            }
         }
     }
 

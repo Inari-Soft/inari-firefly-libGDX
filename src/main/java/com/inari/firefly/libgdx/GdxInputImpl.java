@@ -1,5 +1,7 @@
 package com.inari.firefly.libgdx;
 
+import java.util.BitSet;
+
 import com.badlogic.gdx.Gdx;
 import com.inari.commons.lang.list.DynArray;
 import com.inari.commons.lang.list.IntBag;
@@ -8,6 +10,7 @@ import com.inari.firefly.system.external.FFInput;
 public class GdxInputImpl extends FFInput {
     
     private IntBag buttonCodeMapping = new IntBag( 255, -1 );
+    private BitSet pressedCodeMapping = new BitSet( 255 );
     private DynArray<InputType> inputTypeMapping = new DynArray<InputType>();
 
     @Override
@@ -18,6 +21,21 @@ public class GdxInputImpl extends FFInput {
     @Override
     public final void mapInputType( ButtonType buttonType, InputType inputType ) {
         inputTypeMapping.set( buttonType.ordinal(), inputType );
+    }
+    
+    @Override
+    public final boolean typed( ButtonType buttonType ) {
+        int buttonCode = buttonType.ordinal();
+        int keyCode = buttonCodeMapping.get( buttonCode );
+        
+        boolean pressed = isPressed( buttonType );
+        if ( pressed && pressedCodeMapping.get( keyCode ) ) {
+            return false;
+        }
+
+        pressedCodeMapping.set( keyCode, pressed );
+        
+        return pressed;
     }
 
     @Override
