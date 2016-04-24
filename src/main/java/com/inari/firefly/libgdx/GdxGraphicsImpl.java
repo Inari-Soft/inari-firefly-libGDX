@@ -15,7 +15,12 @@
  ******************************************************************************/ 
 package com.inari.firefly.libgdx;
 
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.util.Iterator;
+
+import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL12;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
@@ -29,6 +34,7 @@ import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
+import com.inari.commons.GeomUtils;
 import com.inari.commons.StringUtils;
 import com.inari.commons.geom.Position;
 import com.inari.commons.geom.Rectangle;
@@ -428,6 +434,31 @@ public final class GdxGraphicsImpl implements FFGraphics {
         spriteBatch.flush();
         currentBlendMode = BlendMode.NONE;
     }
+    
+    @Override
+    public final byte[] getScreenshotPixels( Rectangle area ) {
+        int flippedY = getScreenHeight() - area.height + area.y;
+        int size = area.width * area.height * 3;
+        ByteBuffer screenContents = ByteBuffer.allocateDirect( size ).order( ByteOrder.LITTLE_ENDIAN );
+        GL11.glReadPixels( area.x, flippedY, area.width, area.height, GL12.GL_BGR, GL11.GL_UNSIGNED_BYTE, screenContents );
+        byte[] array = new byte[ size ]; 
+        byte[] inversearray = new byte[ size ]; 
+        screenContents.get( array );
+        
+        for ( int y = 0; y < area.height; y++ ) {
+            System.arraycopy( 
+                array, 
+                GeomUtils.getFlatArrayIndex( 0, area.height - y - 1, area.width * 3 ), 
+                inversearray, 
+                GeomUtils.getFlatArrayIndex( 0, y, area.width * 3 ), 
+                area.width * 3 
+            );
+        }
+        
+        return inversearray;
+    }
+    
+    
 
     private Viewport createBaseViewport( View view ) {
         Rectangle bounds = view.getBounds();
