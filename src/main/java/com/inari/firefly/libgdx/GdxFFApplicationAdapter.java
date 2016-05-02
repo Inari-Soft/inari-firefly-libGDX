@@ -21,16 +21,16 @@ import com.inari.firefly.graphics.text.FontAsset;
 import com.inari.firefly.libgdx.intro.BuildInariIntro;
 import com.inari.firefly.physics.animation.AnimationSystem;
 import com.inari.firefly.system.FFContext;
-import com.inari.firefly.system.FireFly;
+import com.inari.firefly.system.FireFlyApp;
 
 public abstract class GdxFFApplicationAdapter extends ApplicationAdapter implements WorkflowEventListener {
 
-    private FireFly firefly;
+    private FireFlyApp firefly;
     
     @Override
     public final void create () {
         Gdx.graphics.setTitle( getTitle() );
-        firefly = new GdxFirefly();
+        firefly = new GdxFireflyApp();
         FFContext context = firefly.getContext();
         
         Collection<AttributeKey<?>> dynamicAttributes = getDynamicAttributes();

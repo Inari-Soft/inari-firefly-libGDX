@@ -3,8 +3,8 @@ package com.inari.firefly.libgdx.intro;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.inari.firefly.physics.animation.Animation;
-import com.inari.firefly.system.Condition;
 import com.inari.firefly.system.FFContext;
+import com.inari.firefly.system.utils.Condition;
 
 public final class InariIntroFinishedCondition extends Condition {
     

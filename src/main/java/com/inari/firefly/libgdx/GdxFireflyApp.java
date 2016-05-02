@@ -3,11 +3,11 @@ package com.inari.firefly.libgdx;
 import com.inari.commons.event.EventDispatcher;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.graphics.TextureAsset;
-import com.inari.firefly.system.FireFly;
+import com.inari.firefly.system.FireFlyApp;
 
-public final class GdxFirefly extends FireFly {
+public final class GdxFireflyApp extends FireFlyApp {
     
-    protected GdxFirefly() {
+    protected GdxFireflyApp() {
         super( new EventDispatcher(), new GdxGraphicsImpl(), new GdxAudioImpl(), new GdxTimerImpl(), new GdxInputImpl() );
     }
 
