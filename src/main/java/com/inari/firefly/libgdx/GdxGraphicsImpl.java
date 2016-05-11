@@ -91,12 +91,12 @@ public final class GdxGraphicsImpl implements FFGraphics {
     public void init( FFContext context ) {
         this.context = context;
         
-       context.registerListener( ViewEvent.class, this );
+       context.registerListener( ViewEvent.TYPE_KEY, this );
     }
     
     @Override
     public final void dispose( FFContext context ) {
-        context.disposeListener( ViewEvent.class, this );
+        context.disposeListener( ViewEvent.TYPE_KEY, this );
         
         for ( Viewport viewport : viewports ) {
             viewport.dispose();

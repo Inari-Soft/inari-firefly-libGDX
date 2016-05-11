@@ -33,7 +33,7 @@ public class BlendTest extends GdxFFApplicationAdapter {
         
         
         
-        context.registerListener( RenderEvent.class, new RenderEventListener() {
+        context.registerListener( RenderEvent.TYPE_KEY, new RenderEventListener() {
             
             Color color1 = new Color( 1f, 0f, 0f, .5f );
             Color color2 = new Color( 0f, 0f, 1f, .5f );

@@ -40,7 +40,7 @@ public abstract class GdxFFApplicationAdapter extends ApplicationAdapter impleme
             }
         }
         
-        context.registerListener( WorkflowEvent.class, this );
+        context.registerListener( WorkflowEvent.TYPE_KEY, this );
         int startTaskId = context.getComponentBuilder( Task.TYPE_KEY )
             .set( Task.REMOVE_AFTER_RUN, true )
             .set( Task.NAME, BuildInariIntro.INTRO_NAME )
@@ -57,7 +57,7 @@ public abstract class GdxFFApplicationAdapter extends ApplicationAdapter impleme
             loadDefaultFontAsset( context );
             init( context );
             
-            context.disposeListener( WorkflowEvent.class, this );
+            context.disposeListener( WorkflowEvent.TYPE_KEY, this );
         }
     }
 
