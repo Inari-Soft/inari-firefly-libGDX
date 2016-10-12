@@ -13,7 +13,7 @@ public class BuildInariIntro extends Task {
     static final String INARI_LOGO_RESOURCE_PATH = "firefly/inari.png";
     
     public static final String INTRO_TEXTURE = INTRO_NAME + "_texture";
-    static final String INTRO_SPRITE = INTRO_NAME + "_sprite";
+    public static final String INTRO_SPRITE = INTRO_NAME + "_sprite";
     public static final String INTRO_WORKFLOW = INTRO_NAME + "_workflow";
     static final String INTRO_START_STATE = INTRO_NAME + "_startState";
     static final String INTRO_START_TASK = INTRO_NAME + "_startTask";

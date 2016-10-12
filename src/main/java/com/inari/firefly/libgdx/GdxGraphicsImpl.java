@@ -185,8 +185,18 @@ public final class GdxGraphicsImpl implements FFGraphics {
         
         Texture texture = textures.get( textureId );
         TextureRegion sprite = new TextureRegion( texture, textureRegion.x, textureRegion.y, textureRegion.width, textureRegion.height );
-        sprite.flip( false, true );
         
+        if ( data.isHorizontalFlip() ) {
+            if ( data.isVerticalFlip() ) {
+                sprite.flip( true, false );
+            } else {
+                sprite.flip( false, false );
+            }
+        } else if ( data.isVerticalFlip() ) {
+            sprite.flip( true, true );
+        } else {
+            sprite.flip( false, true );
+        }
         
         return sprites.add( sprite );
     }

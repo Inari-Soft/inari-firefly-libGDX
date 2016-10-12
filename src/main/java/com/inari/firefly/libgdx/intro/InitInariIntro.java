@@ -45,7 +45,7 @@ public final class InitInariIntro extends Task {
             .set( TextureAsset.RESOURCE_NAME, BuildInariIntro.INARI_LOGO_RESOURCE_PATH )
         .activate( TextureAsset.class );
         TextureAsset textureAsset = assetSystem.getAssetAs( BuildInariIntro.INTRO_TEXTURE, TextureAsset.class );
-        assetSystem .getAssetBuilder()
+        assetSystem.getAssetBuilder()
             .set( SpriteAsset.NAME, BuildInariIntro.INTRO_SPRITE )
             .set( SpriteAsset.TEXTURE_ASSET_NAME, BuildInariIntro.INTRO_TEXTURE )
             .set( SpriteAsset.TEXTURE_REGION, new Rectangle( 0, 0, textureAsset.getTextureWidth(), textureAsset.getTextureHeight() ) )
