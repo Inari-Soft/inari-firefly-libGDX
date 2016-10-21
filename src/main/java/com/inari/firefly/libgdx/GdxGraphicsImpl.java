@@ -411,6 +411,8 @@ public final class GdxGraphicsImpl implements FFGraphics {
         }
 
         renderShape( data );
+        
+        shapeRenderer.identity();
     }
 
     @Override
