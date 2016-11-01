@@ -28,6 +28,8 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.Texture.TextureFilter;
+import com.badlogic.gdx.graphics.Texture.TextureWrap;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
@@ -36,7 +38,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.inari.commons.GeomUtils;
 import com.inari.commons.StringUtils;
-import com.inari.commons.geom.Position;
+import com.inari.commons.geom.PositionF;
 import com.inari.commons.geom.Rectangle;
 import com.inari.commons.graphics.RGBColor;
 import com.inari.commons.lang.TypedKey;
@@ -59,7 +61,7 @@ import com.inari.firefly.system.external.TransformData;
 
 public final class GdxGraphicsImpl implements FFGraphics {
     
-    private final static float FBO_SCALER = 2f;
+    private final static float FBO_SCALER = 2.0f;
     
     private FFContext context;
     
@@ -165,7 +167,7 @@ public final class GdxGraphicsImpl implements FFGraphics {
         
         data.setTextureWidth( texture.getWidth() );
         data.setTextureHeight( texture.getHeight() );
-
+        
         return textureId;
     }
 
@@ -507,7 +509,7 @@ public final class GdxGraphicsImpl implements FFGraphics {
         }
 
         final void activate( SpriteBatch spriteBatch, ShapeRenderer shapeRenderer, View view, boolean clear ) {
-            Position worldPosition = view.getWorldPosition();
+            PositionF worldPosition = view.getWorldPosition();
             float zoom = view.getZoom();
             RGBColor clearColor = view.getClearColor();
             Rectangle bounds = view.getBounds();

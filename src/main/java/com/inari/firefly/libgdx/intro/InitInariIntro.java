@@ -1,6 +1,7 @@
 package com.inari.firefly.libgdx.intro;
 
 import com.inari.commons.geom.Easing;
+import com.inari.commons.geom.PositionF;
 import com.inari.commons.geom.Rectangle;
 import com.inari.commons.graphics.RGBColor;
 import com.inari.firefly.animation.easing.ColorEasingAnimation;
@@ -53,8 +54,10 @@ public final class InitInariIntro extends Task {
         
         entitySystem.getEntityBuilder()
             .set( ETransform.VIEW_ID, 0 )
-            .set( ETransform.XPOSITION, context.getScreenWidth() / 2 - textureAsset.getTextureWidth() / 2 )
-            .set( ETransform.YPOSITION, context.getScreenHeight() / 2 - textureAsset.getTextureHeight() / 2 )
+            .set( ETransform.POSITION, new PositionF( 
+                context.getScreenWidth() / 2 - textureAsset.getTextureWidth() / 2,
+                context.getScreenHeight() / 2 - textureAsset.getTextureHeight() / 2 
+             ) )
             .set( ESprite.SPRITE_ASSET_NAME, BuildInariIntro.INTRO_SPRITE )
             .set( ESprite.TINT_COLOR, new RGBColor( 1f, 1f, 1f, 0f ) )
             .add( EEntity.CONTROLLER_IDS, 0 )

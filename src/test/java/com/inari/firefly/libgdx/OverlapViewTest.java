@@ -2,6 +2,7 @@ package com.inari.firefly.libgdx;
 
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
+import com.inari.commons.geom.PositionF;
 import com.inari.commons.geom.Rectangle;
 import com.inari.commons.graphics.RGBColor;
 import com.inari.firefly.entity.ETransform;
@@ -61,8 +62,7 @@ public class OverlapViewTest extends GdxFFApplicationAdapter {
         .activateAndNext()
             .set( ETransform.VIEW_ID, 2 )
             .set( ETransform.LAYER_ID, 0 )
-            .set( ETransform.XPOSITION, 10 )
-            .set( ETransform.YPOSITION, 10 )
+            .set( ETransform.POSITION, new PositionF( 10, 10 ) )
             .set( EText.FONT_ASSET_NAME, FFContext.DEFAULT_FONT )
             .set( EText.TEXT, "Test 123 Dies ist ein Text mit einem Absatz\nUnd hier geht es weiter mit dem Text" )
             .set( EText.BLEND_MODE, BlendMode.NORMAL_ALPHA )
@@ -78,8 +78,7 @@ public class OverlapViewTest extends GdxFFApplicationAdapter {
         .activateAndNext()
             .set( ETransform.VIEW_NAME, "VIEW1" )
             .set( ETransform.LAYER_NAME, "Foreground" )
-            .set( ETransform.XPOSITION, 310 )
-            .set( ETransform.YPOSITION, 310 )
+            .set( ETransform.POSITION, new PositionF( 310, 310 ) )
             .set( EText.FONT_ASSET_NAME, FFContext.DEFAULT_FONT )
             .set( EText.TEXT, "Test 123 Dies ist ein Text mit einem Absatz\nUnd hier geht es weiter mit dem Text" )
             .set( EText.BLEND_MODE, BlendMode.NORMAL_ALPHA )

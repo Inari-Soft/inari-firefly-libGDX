@@ -2,6 +2,7 @@ package com.inari.firefly.libgdx;
 
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
+import com.inari.commons.geom.PositionF;
 import com.inari.commons.geom.Rectangle;
 import com.inari.commons.graphics.RGBColor;
 import com.inari.firefly.entity.ETransform;
@@ -59,26 +60,22 @@ public class SpriteFlippingTest extends GdxFFApplicationAdapter {
         
         context.getEntityBuilder()
             .set( ETransform.VIEW_ID, 0 )
-            .set( ETransform.XPOSITION, 100 )
-            .set( ETransform.YPOSITION, 100 )
+            .set( ETransform.POSITION, new PositionF( 100, 100 ) )
             .set( ESprite.SPRITE_ASSET_NAME, "NormalSprite" )
         .activate();
         context.getEntityBuilder()
             .set( ETransform.VIEW_ID, 0 )
-            .set( ETransform.XPOSITION, 120 )
-            .set( ETransform.YPOSITION, 100 )
+            .set( ETransform.POSITION, new PositionF( 120, 100 ) )
             .set( ESprite.SPRITE_ASSET_NAME, "FlippVertical" )
         .activate();
         context.getEntityBuilder()
             .set( ETransform.VIEW_ID, 0 )
-            .set( ETransform.XPOSITION, 140 )
-            .set( ETransform.YPOSITION, 100 )
+            .set( ETransform.POSITION, new PositionF( 140, 100 ) )
             .set( ESprite.SPRITE_ASSET_NAME, "FlippHorizontal" )
         .activate();
         context.getEntityBuilder()
             .set( ETransform.VIEW_ID, 0 )
-            .set( ETransform.XPOSITION, 160 )
-            .set( ETransform.YPOSITION, 100 )
+            .set( ETransform.POSITION, new PositionF( 160, 100 ) )
             .set( ESprite.SPRITE_ASSET_NAME, "FlippVerticalAndHorizontal" )
         .activate();
     }

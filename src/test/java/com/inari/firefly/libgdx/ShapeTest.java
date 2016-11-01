@@ -2,6 +2,7 @@ package com.inari.firefly.libgdx;
 
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
+import com.inari.commons.geom.PositionF;
 import com.inari.commons.graphics.RGBColor;
 import com.inari.firefly.entity.ETransform;
 import com.inari.firefly.entity.EntitySystem;
@@ -29,10 +30,8 @@ public class ShapeTest extends GdxFFApplicationAdapter {
         context.getComponentBuilder( EntitySystem.Entity.ENTITY_TYPE_KEY )
             .set( ETransform.VIEW_ID, 0 )
             .set( ETransform.LAYER_ID, 0 )
-            .set( ETransform.XPOSITION, 100 )
-            .set( ETransform.YPOSITION, 100 )
-            .set( ETransform.PIVOT_X, 125 )
-            .set( ETransform.PIVOT_Y, 125 )
+            .set( ETransform.POSITION, new PositionF( 100, 100 ) )
+            .set( ETransform.POSITION, new PositionF( 125, 125 ) )
             .set( ETransform.ROTATION, 45f )
             .set( ETransform.SCALE_Y, 2 )
             .set( EShape.BLEND_MODE, BlendMode.ADDITIVE )
@@ -49,8 +48,7 @@ public class ShapeTest extends GdxFFApplicationAdapter {
         context.getComponentBuilder( EntitySystem.Entity.ENTITY_TYPE_KEY )
             .set( ETransform.VIEW_ID, 0 )
             .set( ETransform.LAYER_ID, 0 )
-            .set( ETransform.XPOSITION, 100 )
-            .set( ETransform.YPOSITION, 150 )
+            .set( ETransform.POSITION, new PositionF( 100, 150 ) )
             .set( EShape.BLEND_MODE, BlendMode.ADDITIVE )
             .set( EShape.SHAPE_TYPE, EShape.Type.RECTANGLE )
             .set( EShape.FILL, true )
