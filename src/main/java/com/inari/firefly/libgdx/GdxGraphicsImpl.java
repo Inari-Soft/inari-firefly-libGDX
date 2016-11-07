@@ -116,11 +116,10 @@ public final class GdxGraphicsImpl implements FFGraphics {
 
     @Override
     public final void onViewEvent( ViewEvent event ) {
-        View view = event.view;
-        int viewportId = view.index();
-        switch ( event.eventType ) {
+        switch ( event.getType() ) {
             case VIEW_CREATED: {
-                Viewport viewport;
+                final View view = event.getView();
+                final Viewport viewport;
                 if ( !view.isBase() ) {
                     viewport = createVirtualViewport( view );
                 } else {
@@ -128,11 +127,11 @@ public final class GdxGraphicsImpl implements FFGraphics {
                     baseViewport = viewport;
                     baseView = view;
                 }
-                viewports.set( viewportId, viewport );
+                viewports.set( view.index(), viewport );
                 break;
             }
             case VIEW_DELETED: {
-                Viewport viewport = viewports.remove( viewportId );
+                final Viewport viewport = viewports.remove( event.getView().index() );
                 if ( viewport != null ) {
                     viewport.dispose();
                 }
