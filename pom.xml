@@ -3,6 +3,37 @@
   <groupId>com.github.inari-soft</groupId>
   <artifactId>firefly-libgdx</artifactId>
   <version>1.0-SNAPSHOT</version>
+  
+  <developers>
+        <developer>
+            <name>Andreas Hefti</name>
+            <email>inarisoft@yahoo.de</email>
+            <organization>Inari-Soft</organization>
+            <organizationUrl>https://github.com/Inari-Soft/inari-firefly-libGDX</organizationUrl>
+        </developer>
+    </developers>
+    
+    <scm>
+        <connection>https://github.com/Inari-Soft/inari-firefly-libGDX.git</connection>
+        <developerConnection>https://github.com/Inari-Soft/inari-firefly-libGDX.git</developerConnection>
+        <url>https://github.com/Inari-Soft/inari-firefly-libGDX.git</url>
+    </scm>
+    
+    <licenses>
+      <license>
+        <name>The Apache License, Version 2.0</name>
+        <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+      </license>
+    </licenses>
+    
+    <repositories>
+        <repository>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
+        </repository>
+    </repositories>
+  
+  
   <build>
     <plugins>
       <plugin>
@@ -25,27 +56,6 @@
          </execution>
         </executions>
       </plugin>
-<!--       <plugin> -->
-<!--         <groupId>org.apache.maven.plugins</groupId> -->
-<!--         <artifactId>maven-shade-plugin</artifactId> -->
-<!--         <executions> -->
-<!--           <execution> -->
-<!--             <phase>package</phase> -->
-<!--             <goals> -->
-<!--               <goal>shade</goal> -->
-<!--             </goals> -->
-<!--             <configuration> -->
-<!--               <artifactSet> -->
-<!--                 <excludes> -->
-<!--                   <exclude>com.badlogicgames.gdx:gdx</exclude> -->
-<!--                   <exclude>junit:junit</exclude> -->
-<!--                   <exclude>org.hamcrest:hamcrest-core</exclude> -->
-<!--                 </excludes> -->
-<!--               </artifactSet> -->
-<!--             </configuration> -->
-<!--           </execution> -->
-<!--         </executions> -->
-<!--       </plugin> -->
      </plugins>
   </build>
   <dependencies>
@@ -68,9 +78,9 @@
         <scope>test</scope>
     </dependency>
     <dependency>
-    	<groupId>com.github.inari-soft</groupId>
-    	<artifactId>firefly-lib</artifactId>
-    	<version>1.0-SNAPSHOT</version>
+       <groupId>com.github.inari-soft</groupId>
+       <artifactId>firefly-lib</artifactId>
+       <version>1.0-SNAPSHOT</version>
     </dependency>
   </dependencies> 
 </project>
