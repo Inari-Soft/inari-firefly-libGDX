@@ -68,15 +68,14 @@
         <groupId>com.badlogicgames.gdx</groupId>
         <artifactId>gdx-backend-lwjgl</artifactId>
         <version>1.9.2</version>
-        <scope>test</scope>
     </dependency>
-    <dependency>
-        <groupId>com.badlogicgames.gdx</groupId>
-        <artifactId>gdx-platform</artifactId>
-        <version>1.9.2</version>
-        <classifier>natives-desktop</classifier>
-        <scope>test</scope>
-    </dependency>
+<!--     <dependency> -->
+<!--         <groupId>com.badlogicgames.gdx</groupId> -->
+<!--         <artifactId>gdx-platform</artifactId> -->
+<!--         <version>1.9.2</version> -->
+<!--         <classifier>natives-desktop</classifier> -->
+<!--         <scope>test</scope> -->
+<!--     </dependency> -->
     <dependency>
        <groupId>com.github.inari-soft</groupId>
        <artifactId>inari-firefly-lib</artifactId>
