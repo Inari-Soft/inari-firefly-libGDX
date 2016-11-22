@@ -35,6 +35,12 @@
   
   
   <build>
+     <resources>
+     <resource>
+       <directory>assets</directory>
+     </resource>
+   </resources>
+  
     <plugins>
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
