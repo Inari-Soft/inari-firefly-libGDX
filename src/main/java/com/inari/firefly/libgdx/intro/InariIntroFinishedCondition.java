@@ -6,7 +6,7 @@ import com.inari.firefly.physics.animation.Animation;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.utils.Condition;
 
-public final class InariIntroFinishedCondition extends Condition {
+public final class InariIntroFinishedCondition implements Condition {
     
     @Override
     public final boolean check( FFContext context ) {
