@@ -260,6 +260,14 @@ public final class GdxGraphicsImpl implements FFGraphics {
         setShaderForSpriteBatch( spriteRenderable );
         spriteBatch.draw( sprite, xpos, ypos );
     }
+    
+    @Override
+    public final void renderSprite( SpriteRenderable spriteRenderable, float xpos, float ypos, float scale ) {
+        setColorAndBlendMode( spriteRenderable.getTintColor(), spriteRenderable.getBlendMode() );
+        TextureRegion sprite = sprites.get( spriteRenderable.getSpriteId() );
+        setShaderForSpriteBatch( spriteRenderable );
+        spriteBatch.draw( sprite, xpos, ypos, 0, 0, sprite.getRegionWidth(), sprite.getRegionHeight(), scale, scale, 0 );
+    }
 
     @Override
     public final void renderSprite( SpriteRenderable spriteRenderable, TransformData transformData ) {
@@ -480,7 +488,7 @@ public final class GdxGraphicsImpl implements FFGraphics {
     private Viewport createVirtualViewport( View view ) {
         Rectangle bounds = view.getBounds();
         OrthographicCamera camera = new OrthographicCamera( bounds.width, bounds.height );
-        FrameBuffer frameBuffer = new FrameBuffer( Format.RGB888, (int) ( bounds.width * FBO_SCALER ), (int) ( bounds.height * FBO_SCALER ), false ) ;
+        FrameBuffer frameBuffer = new FrameBuffer( Format.RGBA8888, (int) ( bounds.width * FBO_SCALER ), (int) ( bounds.height * FBO_SCALER ), false ) ;
         TextureRegion textureRegion = new TextureRegion( frameBuffer.getColorBufferTexture() );
         textureRegion.flip( false, false );
         
