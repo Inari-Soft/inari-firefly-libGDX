@@ -480,7 +480,7 @@ public final class GdxGraphicsImpl implements FFGraphics {
     private Viewport createVirtualViewport( View view ) {
         Rectangle bounds = view.getBounds();
         OrthographicCamera camera = new OrthographicCamera( bounds.width, bounds.height );
-        FrameBuffer frameBuffer = new FrameBuffer( Format.RGB888, (int) ( bounds.width * FBO_SCALER ), (int) ( bounds.height * FBO_SCALER ), false ) ;
+        FrameBuffer frameBuffer = new FrameBuffer( Format.RGBA8888, (int) ( bounds.width * FBO_SCALER ), (int) ( bounds.height * FBO_SCALER ), false ) ;
         TextureRegion textureRegion = new TextureRegion( frameBuffer.getColorBufferTexture() );
         textureRegion.flip( false, false );
         
