@@ -1,22 +1,17 @@
 package com.inari.firefly.libgdx.intro;
 
-import com.inari.commons.geom.Easing;
 import com.inari.commons.geom.PositionF;
 import com.inari.commons.geom.Rectangle;
 import com.inari.commons.graphics.RGBColor;
-import com.inari.firefly.animation.easing.ColorEasingAnimation;
-import com.inari.firefly.animation.easing.EasingData;
 import com.inari.firefly.asset.AssetSystem;
-import com.inari.firefly.control.ControllerSystem;
 import com.inari.firefly.control.task.Task;
-import com.inari.firefly.controller.entity.SpriteTintColorAnimationController;
 import com.inari.firefly.entity.EEntity;
 import com.inari.firefly.entity.ETransform;
+import com.inari.firefly.entity.EntityController;
 import com.inari.firefly.entity.EntitySystem;
 import com.inari.firefly.graphics.TextureAsset;
 import com.inari.firefly.graphics.sprite.ESprite;
 import com.inari.firefly.graphics.sprite.SpriteAsset;
-import com.inari.firefly.physics.animation.AnimationSystem;
 
 public final class InitInariIntro extends Task {
 
@@ -28,18 +23,9 @@ public final class InitInariIntro extends Task {
     public final void runTask() {
         AssetSystem assetSystem = context.getSystem( AssetSystem.SYSTEM_KEY );
         EntitySystem entitySystem = context.getSystem( EntitySystem.SYSTEM_KEY );
-        AnimationSystem animationSystem = context.getSystem( AnimationSystem.SYSTEM_KEY );
-        ControllerSystem controllerSystem = context.getSystem( ControllerSystem.SYSTEM_KEY );
         
-        animationSystem.getAnimationBuilder()
-            .set( ColorEasingAnimation.NAME, BuildInariIntro.INTRO_ANIMATION )
-            .set( ColorEasingAnimation.LOOPING, false )
-            .set( ColorEasingAnimation.EASING_DATA_ALPHA, new EasingData( Easing.Type.LINEAR, 0.0f, 1.0f, 500 ) )
-        .activate( ColorEasingAnimation.class );
-        
-        controllerSystem.getControllerBuilder()
-            .set( SpriteTintColorAnimationController.ANIMATION_ID, 0 )
-        .build( SpriteTintColorAnimationController.class );
+        int controllerId = context.getComponentBuilder( EntityController.TYPE_KEY )
+            .build( IntroAnimationController.class );
                 
         assetSystem .getAssetBuilder()
             .set( TextureAsset.NAME, BuildInariIntro.INTRO_TEXTURE )
@@ -60,8 +46,25 @@ public final class InitInariIntro extends Task {
              ) )
             .set( ESprite.SPRITE_ASSET_NAME, BuildInariIntro.INTRO_SPRITE )
             .set( ESprite.TINT_COLOR, new RGBColor( 1f, 1f, 1f, 0f ) )
-            .add( EEntity.CONTROLLER_IDS, 0 )
+            .add( EEntity.CONTROLLER_IDS, controllerId )
         .activate();
+    }
+    
+    public static class IntroAnimationController extends EntityController {
+
+        public IntroAnimationController( int id ) {
+            super( id );
+        }
+
+        @Override
+        protected void update( int entityId ) {
+            ESprite sprite = context.getEntityComponent( entityId, ESprite.TYPE_KEY );
+            RGBColor tintColor = sprite.getTintColor();
+            if( tintColor.a < 1f) {
+                tintColor.a = tintColor.a + 0.05f;
+            }
+        }
+        
     }
     
 }
