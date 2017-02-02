@@ -3,9 +3,9 @@ package com.inari.firefly.libgdx.intro;
 import com.inari.firefly.control.state.StateChange;
 import com.inari.firefly.control.state.StateSystem;
 import com.inari.firefly.control.state.Workflow;
+import com.inari.firefly.control.state.WorkflowEventTrigger;
 import com.inari.firefly.control.task.Task;
 import com.inari.firefly.control.task.TaskSystem;
-import com.inari.firefly.control.task.WorkflowTaskTrigger;
 
 public class BuildInariIntro extends Task {
     
@@ -33,11 +33,11 @@ public class BuildInariIntro extends Task {
         taskSystem.getTaskBuilder()
             .set( Task.NAME, INTRO_START_TASK )
             .set( Task.REMOVE_AFTER_RUN, true ) 
-            .set( 
+            .add( 
                 Task.TRIGGER, 
-                new WorkflowTaskTrigger( 
+                new WorkflowEventTrigger(
                     INTRO_WORKFLOW, 
-                    WorkflowTaskTrigger.Type.ENTER_STATE, 
+                    WorkflowEventTrigger.Type.ENTER_STATE, 
                     INTRO_START_STATE
                 ) 
             )
