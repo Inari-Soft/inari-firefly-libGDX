@@ -138,11 +138,15 @@ public abstract class GdxFFApplicationAdapter extends ApplicationAdapter impleme
         if ( fitToWidth ) {
             bounds.width = baseWidth;
             bounds.height = Math.round( ( baseHeight / sourceRatio ) * targetRatio );
-            worldPosition.y = - ( bounds.height - baseHeight ) / 2;
+            if ( centerCamera ) {
+                worldPosition.y = - ( bounds.height - baseHeight ) / 2;
+            }
         } else {
             bounds.width = Math.round( ( baseWidth / targetRatio ) * sourceRatio );
             bounds.height = baseHeight;
-            worldPosition.x = - ( bounds.width - baseWidth ) / 2;
+            if ( centerCamera ) {
+                worldPosition.x = - ( bounds.width - baseWidth ) / 2;
+            }
         }
     }
     
