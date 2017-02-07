@@ -3,12 +3,10 @@ package com.inari.firefly.libgdx;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 import com.inari.commons.geom.PositionF;
-import com.inari.commons.geom.Rectangle;
 import com.inari.commons.graphics.RGBColor;
 import com.inari.firefly.entity.ETransform;
 import com.inari.firefly.graphics.shape.EShape;
 import com.inari.firefly.graphics.shape.ShapeRenderSystem;
-import com.inari.firefly.graphics.view.View;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.external.ShapeData;
 
@@ -37,23 +35,7 @@ public class ResizableBaseViewportTest extends GdxFFApplicationAdapter {
 
     @Override
     protected void resize( int width, int height, FFContext context ) {
-        View baseView = context.getSystemComponent( View.TYPE_KEY, 0 );
-        PositionF worldPosition = baseView.getWorldPosition();
-        Rectangle bounds = baseView.getBounds();
-        
-        float targetRatio = (float) height / width;
-        float sourceRatio = (float) BASE_HEIGHT / BASE_WIDTH;
-        boolean fitToWidth = targetRatio > sourceRatio;
-
-        if ( fitToWidth ) {
-            bounds.width = BASE_WIDTH;
-            bounds.height = Math.round( ( BASE_HEIGHT / sourceRatio ) * targetRatio );
-            worldPosition.y = - ( bounds.height - BASE_HEIGHT ) / 2;
-        } else {
-            bounds.width = Math.round( ( BASE_WIDTH / targetRatio ) * sourceRatio );
-            bounds.height = BASE_HEIGHT;
-            worldPosition.x = - ( bounds.width - BASE_WIDTH ) / 2;
-        }
+        fitBaseViewportToScreen( width, height, BASE_WIDTH, BASE_HEIGHT, true );
     }
 
     @Override

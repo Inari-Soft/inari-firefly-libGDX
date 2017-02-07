@@ -5,6 +5,8 @@ import java.util.Collection;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
+import com.inari.commons.geom.PositionF;
+import com.inari.commons.geom.Rectangle;
 import com.inari.firefly.asset.Asset;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.dynattr.DynamicAttribueMapper;
@@ -18,6 +20,7 @@ import com.inari.firefly.control.task.TaskSystemEvent;
 import com.inari.firefly.control.task.TaskSystemEvent.Type;
 import com.inari.firefly.entity.EntitySystem;
 import com.inari.firefly.graphics.text.FontAsset;
+import com.inari.firefly.graphics.view.View;
 import com.inari.firefly.libgdx.intro.BuildInariIntro;
 import com.inari.firefly.physics.animation.AnimationSystem;
 import com.inari.firefly.system.FFContext;
@@ -120,6 +123,27 @@ public abstract class GdxFFApplicationAdapter extends ApplicationAdapter impleme
     @Override
     public final void dispose() {
         
+    }
+    
+    protected final void fitBaseViewportToScreen( int width, int height, int baseWidth, int baseHeight, boolean centerCamera ) {
+        FFContext context = firefly.getContext();
+        View baseView = context.getSystemComponent( View.TYPE_KEY, 0 );
+        PositionF worldPosition = baseView.getWorldPosition();
+        Rectangle bounds = baseView.getBounds();
+        
+        float targetRatio = (float) height / width;
+        float sourceRatio = (float) baseHeight / baseWidth;
+        boolean fitToWidth = targetRatio > sourceRatio;
+
+        if ( fitToWidth ) {
+            bounds.width = baseWidth;
+            bounds.height = Math.round( ( baseHeight / sourceRatio ) * targetRatio );
+            worldPosition.y = - ( bounds.height - baseHeight ) / 2;
+        } else {
+            bounds.width = Math.round( ( baseWidth / targetRatio ) * sourceRatio );
+            bounds.height = baseHeight;
+            worldPosition.x = - ( bounds.width - baseWidth ) / 2;
+        }
     }
     
     
