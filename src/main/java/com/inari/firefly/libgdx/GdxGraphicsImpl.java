@@ -34,6 +34,8 @@ import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
+import com.badlogic.gdx.utils.viewport.FitViewport;
+import com.badlogic.gdx.utils.viewport.Viewport;
 import com.inari.commons.GeomUtils;
 import com.inari.commons.StringUtils;
 import com.inari.commons.geom.PositionF;
@@ -65,15 +67,16 @@ public final class GdxGraphicsImpl implements FFGraphics {
     
     private final DynArray<Texture> textures;
     private final DynArray<TextureRegion> sprites;
-    private final DynArray<Viewport> viewports;
+    private final DynArray<ViewportData> viewports;
     private final DynArray<ShaderProgram> shaders;
 
     private final SpriteBatch spriteBatch;
     private ShapeRenderer shapeRenderer;
     
-    private Viewport baseViewport = null;
+    private Viewport gdxBaseViewport;
+    private ViewportData baseViewport = null;
     private View baseView = null;
-    private Viewport activeViewport = null;
+    private ViewportData activeViewport = null;
     private int activeShaderId = -1;
     private int activeShapeShaderId = -1;
     private BlendMode currentBlendMode = BlendMode.NONE;
@@ -81,7 +84,7 @@ public final class GdxGraphicsImpl implements FFGraphics {
     GdxGraphicsImpl() {
         textures = new DynArray<Texture>( 100 );
         sprites = new DynArray<TextureRegion>( 100, 50 );
-        viewports = new DynArray<Viewport>( 50 );
+        viewports = new DynArray<ViewportData>( 50 );
         shaders = new DynArray<ShaderProgram>();
         spriteBatch = new SpriteBatch();
         shapeRenderer = new ShapeRenderer();
@@ -95,10 +98,10 @@ public final class GdxGraphicsImpl implements FFGraphics {
     }
     
     @Override
-    public final void dispose( FFContext context ) {
+    public final void dispose( final FFContext context ) {
         context.disposeListener( ViewEvent.TYPE_KEY, this );
         
-        for ( Viewport viewport : viewports ) {
+        for ( ViewportData viewport : viewports ) {
             viewport.dispose();
         }
         for ( Texture texture : textures ) {
@@ -113,13 +116,35 @@ public final class GdxGraphicsImpl implements FFGraphics {
         }
         baseView = null;
     }
+    
+    public void updateBaseViewport( int width, int height ) {
+        if ( gdxBaseViewport != null ) {
+            gdxBaseViewport.update( width, height, true );
+        }
+    }
+    
+    /**
+     * Converts an x-coordinate given in logical screen coordinates to
+     * backbuffer coordinates.
+     */
+    public static int toBackBufferX(int logicalX) {
+        return (int)(logicalX * Gdx.graphics.getBackBufferWidth() / (float)Gdx.graphics.getWidth());
+    }
+
+    /**
+     * Convers an y-coordinate given in backbuffer coordinates to
+     * logical screen coordinates
+     */
+    public static int toBackBufferY(int logicalY) {
+        return (int)(logicalY * Gdx.graphics.getBackBufferHeight() / (float)Gdx.graphics.getHeight());
+    }
 
     @Override
-    public final void onViewEvent( ViewEvent event ) {
+    public final void onViewEvent( final ViewEvent event ) {
         switch ( event.getType() ) {
             case VIEW_CREATED: {
                 final View view = event.getView();
-                final Viewport viewport;
+                final ViewportData viewport;
                 if ( !view.isBase() ) {
                     viewport = createVirtualViewport( view );
                 } else {
@@ -131,7 +156,7 @@ public final class GdxGraphicsImpl implements FFGraphics {
                 break;
             }
             case VIEW_DELETED: {
-                final Viewport viewport = viewports.remove( event.getView().index() );
+                final ViewportData viewport = viewports.remove( event.getView().index() );
                 if ( viewport != null ) {
                     viewport.dispose();
                 }
@@ -143,7 +168,7 @@ public final class GdxGraphicsImpl implements FFGraphics {
 
     // TODO make it simpler
     @Override
-    public final int createTexture( TextureData data ) {
+    public final int createTexture( final TextureData data ) {
         Texture texture = null;
         int textureId = -1;
         String colorFilterName = data.getDynamicAttribute( GdxFireflyApp.DynamicAttributes.TEXTURE_COLOR_CONVERTER_NAME );
@@ -175,15 +200,15 @@ public final class GdxGraphicsImpl implements FFGraphics {
     }
 
     @Override
-    public final int createSprite( SpriteData data ) {
+    public final int createSprite( final SpriteData data ) {
         int textureId = data.getTextureId();
         Rectangle textureRegion = data.getTextureRegion();
         if ( !textures.contains( textureId ) ) {
             throw new FFInitException( "Texture with id: " + textureId + "not loaded" );
         }
         
-        Texture texture = textures.get( textureId );
-        TextureRegion sprite = new TextureRegion( texture, textureRegion.x, textureRegion.y, textureRegion.width, textureRegion.height );
+        final Texture texture = textures.get( textureId );
+        final TextureRegion sprite = new TextureRegion( texture, textureRegion.x, textureRegion.y, textureRegion.width, textureRegion.height );
         
         if ( data.isHorizontalFlip() ) {
             if ( data.isVerticalFlip() ) {
@@ -206,7 +231,7 @@ public final class GdxGraphicsImpl implements FFGraphics {
     }
     
     @Override
-    public final int createShader( ShaderAsset shaderAsset ) {
+    public final int createShader( final ShaderAsset shaderAsset ) {
         String vertexShader = shaderAsset.getVertexShaderProgram();
         String fragmentShader = shaderAsset.getFragmentShaderProgram();
         
@@ -247,14 +272,14 @@ public final class GdxGraphicsImpl implements FFGraphics {
     }
 
     @Override
-    public final void startRendering( View view, boolean clear ) {
+    public final void startRendering( final View view, boolean clear ) {
         activeViewport = viewports.get( view.index() );
         activeViewport.activate( spriteBatch, shapeRenderer, view, clear );
         spriteBatch.begin();
     }
 
     @Override
-    public final void renderSprite( SpriteRenderable spriteRenderable, float xpos, float ypos ) {
+    public final void renderSprite( final SpriteRenderable spriteRenderable, float xpos, float ypos ) {
         setColorAndBlendMode( spriteRenderable.getTintColor(), spriteRenderable.getBlendMode() );
         TextureRegion sprite = sprites.get( spriteRenderable.getSpriteId() );
         setShaderForSpriteBatch( spriteRenderable );
@@ -262,7 +287,7 @@ public final class GdxGraphicsImpl implements FFGraphics {
     }
     
     @Override
-    public final void renderSprite( SpriteRenderable spriteRenderable, float xpos, float ypos, float scale ) {
+    public final void renderSprite( final SpriteRenderable spriteRenderable, float xpos, float ypos, float scale ) {
         setColorAndBlendMode( spriteRenderable.getTintColor(), spriteRenderable.getBlendMode() );
         TextureRegion sprite = sprites.get( spriteRenderable.getSpriteId() );
         setShaderForSpriteBatch( spriteRenderable );
@@ -270,7 +295,7 @@ public final class GdxGraphicsImpl implements FFGraphics {
     }
 
     @Override
-    public final void renderSprite( SpriteRenderable spriteRenderable, TransformData transformData ) {
+    public final void renderSprite( final SpriteRenderable spriteRenderable, final TransformData transformData ) {
         setColorAndBlendMode( spriteRenderable.getTintColor(), spriteRenderable.getBlendMode() );
         TextureRegion sprite = sprites.get( spriteRenderable.getSpriteId() );
         setShaderForSpriteBatch( spriteRenderable );
@@ -289,7 +314,7 @@ public final class GdxGraphicsImpl implements FFGraphics {
     }
 
     @Override
-    public final void renderShape( ShapeData data ) {
+    public final void renderShape( final ShapeData data ) {
         int shaderId = data.getShaderId();
         if ( shaderId != activeShapeShaderId ) {
             if ( shaderId < 0 ) {
@@ -441,7 +466,7 @@ public final class GdxGraphicsImpl implements FFGraphics {
             
             while ( virtualViews.hasNext() ) {
                 View virtualView = virtualViews.next();
-                Viewport viewport = viewports.get( virtualView.index() );
+                ViewportData viewport = viewports.get( virtualView.index() );
                 Rectangle bounds = virtualView.getBounds();
                 setColorAndBlendMode( virtualView.getTintColor(), virtualView.getBlendMode() );
                 spriteBatch.draw( viewport.fboTexture, bounds.x, bounds.y, bounds.width, bounds.height );
@@ -479,28 +504,29 @@ public final class GdxGraphicsImpl implements FFGraphics {
     
     
 
-    private Viewport createBaseViewport( View view ) {
+    private ViewportData createBaseViewport( View view ) {
         Rectangle bounds = view.getBounds();
         OrthographicCamera camera = new OrthographicCamera( bounds.width, bounds.height );
-        return new Viewport( camera, null, null );
+        gdxBaseViewport = new FitViewport( bounds.width, bounds.height, camera );
+        return new ViewportData( camera, null, null );
     }
 
-    private Viewport createVirtualViewport( View view ) {
+    private ViewportData createVirtualViewport( View view ) {
         Rectangle bounds = view.getBounds();
         OrthographicCamera camera = new OrthographicCamera( bounds.width, bounds.height );
         FrameBuffer frameBuffer = new FrameBuffer( Format.RGBA8888, (int) ( bounds.width * FBO_SCALER ), (int) ( bounds.height * FBO_SCALER ), false ) ;
         TextureRegion textureRegion = new TextureRegion( frameBuffer.getColorBufferTexture() );
         textureRegion.flip( false, false );
         
-        return new Viewport( camera, frameBuffer, textureRegion );
+        return new ViewportData( camera, frameBuffer, textureRegion );
     }
 
-    private static final class Viewport {
+    private static final class ViewportData {
         final OrthographicCamera camera;
         final FrameBuffer fbo;
         final TextureRegion fboTexture;
         
-        Viewport( OrthographicCamera camera, FrameBuffer fbo, TextureRegion fboTexture ) {
+        ViewportData( OrthographicCamera camera, FrameBuffer fbo, TextureRegion fboTexture ) {
             super();
             this.camera = camera;
             this.fbo = fbo;
