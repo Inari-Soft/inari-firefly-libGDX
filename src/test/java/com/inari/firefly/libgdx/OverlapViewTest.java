@@ -88,6 +88,7 @@ public class OverlapViewTest extends GdxFFApplicationAdapter {
 
     @Override
     protected void resize( int width, int height, FFContext context ) {
+
     }
 
     @Override
@@ -101,7 +102,7 @@ public class OverlapViewTest extends GdxFFApplicationAdapter {
     public static void main (String[] arg) {
         try {
             LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
-            config.resizable = false;
+            config.resizable = true;
             config.width = 800;
             config.height = 600;
             new LwjglApplication( new OverlapViewTest(), config );

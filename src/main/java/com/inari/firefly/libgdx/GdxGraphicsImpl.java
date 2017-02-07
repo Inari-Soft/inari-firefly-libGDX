@@ -73,7 +73,6 @@ public final class GdxGraphicsImpl implements FFGraphics {
     private final SpriteBatch spriteBatch;
     private ShapeRenderer shapeRenderer;
     
-    private Viewport gdxBaseViewport;
     private ViewportData baseViewport = null;
     private View baseView = null;
     private ViewportData activeViewport = null;
@@ -115,12 +114,6 @@ public final class GdxGraphicsImpl implements FFGraphics {
             baseViewport.dispose();
         }
         baseView = null;
-    }
-    
-    public void updateBaseViewport( int width, int height ) {
-        if ( gdxBaseViewport != null ) {
-            gdxBaseViewport.update( width, height, true );
-        }
     }
     
     /**
@@ -507,7 +500,6 @@ public final class GdxGraphicsImpl implements FFGraphics {
     private ViewportData createBaseViewport( View view ) {
         Rectangle bounds = view.getBounds();
         OrthographicCamera camera = new OrthographicCamera( bounds.width, bounds.height );
-        gdxBaseViewport = new FitViewport( bounds.width, bounds.height, camera );
         return new ViewportData( camera, null, null );
     }
 
