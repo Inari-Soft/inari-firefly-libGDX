@@ -30,7 +30,7 @@ public class BuildInariIntro extends Task {
         StateSystem stateSystem = context.getSystem( StateSystem.SYSTEM_KEY );
         TaskSystem taskSystem = context.getSystem( TaskSystem.SYSTEM_KEY );
         
-        taskSystem.getTaskBuilder()
+        taskSystem.getTaskBuilder( InitInariIntro.class )
             .set( Task.NAME, INTRO_START_TASK )
             .set( Task.REMOVE_AFTER_RUN, true ) 
             .add( 
@@ -41,7 +41,7 @@ public class BuildInariIntro extends Task {
                     INTRO_START_STATE
                 ) 
             )
-        .build( InitInariIntro.class );
+        .build();
             
         
         int workflowId = stateSystem.getWorkflowBuilder()

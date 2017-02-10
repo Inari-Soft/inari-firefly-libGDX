@@ -25,38 +25,38 @@ public class SpriteFlippingTest extends GdxFFApplicationAdapter {
         baseView.setBlendMode( null );
         baseView.setClearColor( new RGBColor( 1f, 1f, 1f, 1f ) );
         
-        context.getComponentBuilder( TextureAsset.TYPE_KEY )
+        context.getComponentBuilder( TextureAsset.TYPE_KEY, TextureAsset.class )
             .set( TextureAsset.NAME, "TestTexture" )
             .set( TextureAsset.RESOURCE_NAME, "firefly/fireflyMicroFont.png" )
-        .activate( TextureAsset.class );
+        .activate();
         
-        context.getComponentBuilder( SpriteAsset.TYPE_KEY )
+        context.getComponentBuilder( SpriteAsset.TYPE_KEY, SpriteAsset.class )
             .set( SpriteAsset.NAME, "NormalSprite" )
             .set( SpriteAsset.TEXTURE_ASSET_NAME, "TestTexture" )
             .set( SpriteAsset.TEXTURE_REGION, new Rectangle( 0, 0, 8, 12 ) )
-        .activate( SpriteAsset.class );
+        .activate();
         
-        context.getComponentBuilder( SpriteAsset.TYPE_KEY )
+        context.getComponentBuilder( SpriteAsset.TYPE_KEY, SpriteAsset.class )
             .set( SpriteAsset.NAME, "FlippVertical" )
             .set( SpriteAsset.TEXTURE_ASSET_NAME, "TestTexture" )
             .set( SpriteAsset.TEXTURE_REGION, new Rectangle( 0, 0, 8, 12 ) )
             .set( SpriteAsset.VERTICAL_FLIP, true )
-        .activate( SpriteAsset.class );
+        .activate();
         
-        context.getComponentBuilder( SpriteAsset.TYPE_KEY )
+        context.getComponentBuilder( SpriteAsset.TYPE_KEY, SpriteAsset.class )
             .set( SpriteAsset.NAME, "FlippHorizontal" )
             .set( SpriteAsset.TEXTURE_ASSET_NAME, "TestTexture" )
             .set( SpriteAsset.TEXTURE_REGION, new Rectangle( 0, 0, 8, 12 ) )
             .set( SpriteAsset.HORIZONTAL_FLIP, true )
-        .activate( SpriteAsset.class );
+        .activate();
         
-        context.getComponentBuilder( SpriteAsset.TYPE_KEY )
+        context.getComponentBuilder( SpriteAsset.TYPE_KEY, SpriteAsset.class )
             .set( SpriteAsset.NAME, "FlippVerticalAndHorizontal" )
             .set( SpriteAsset.TEXTURE_ASSET_NAME, "TestTexture" )
             .set( SpriteAsset.TEXTURE_REGION, new Rectangle( 0, 0, 8, 12 ) )
             .set( SpriteAsset.VERTICAL_FLIP, true )
             .set( SpriteAsset.HORIZONTAL_FLIP, true )
-        .activate( SpriteAsset.class );
+        .activate();
         
         context.getEntityBuilder()
             .set( ETransform.VIEW_ID, 0 )

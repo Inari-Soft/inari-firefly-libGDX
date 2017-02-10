@@ -44,10 +44,10 @@ public abstract class GdxFFApplicationAdapter extends ApplicationAdapter impleme
         }
         
         context.registerListener( WorkflowEvent.TYPE_KEY, this );
-        int startTaskId = context.getComponentBuilder( Task.TYPE_KEY )
+        int startTaskId = context.getComponentBuilder( Task.TYPE_KEY, BuildInariIntro.class )
             .set( Task.REMOVE_AFTER_RUN, true )
             .set( Task.NAME, BuildInariIntro.INTRO_NAME )
-            .build( BuildInariIntro.class );
+            .build();
         context.notify( new TaskSystemEvent( Type.RUN_TASK, startTaskId ) );
     }
 
@@ -65,7 +65,7 @@ public abstract class GdxFFApplicationAdapter extends ApplicationAdapter impleme
     }
 
     private void loadDefaultFontAsset( FFContext context ) {
-        context.getComponentBuilder( Asset.TYPE_KEY )
+        context.getComponentBuilder( Asset.TYPE_KEY, FontAsset.class )
             .set( FontAsset.NAME, FFContext.DEFAULT_FONT )
             .set( FontAsset.TEXTURE_RESOURCE_NAME, "firefly/fireflyMicroFont.png" )
             .set( FontAsset.CHAR_WIDTH, 8 )
@@ -77,7 +77,7 @@ public abstract class GdxFFApplicationAdapter extends ApplicationAdapter impleme
                 { 'A','B','C','D','E','F','G','H','I','J','J','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z',' ' },
                 { '1','2','3','4','5','6','7','8','9','0','!','@','£','$','%','?','&','*','(',')','-','+','=','"','.',',',':' }
             } )
-        .activate( FontAsset.class );
+        .activate();
     }
 
     private void clearIntro( FFContext context ) {

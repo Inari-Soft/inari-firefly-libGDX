@@ -3,7 +3,7 @@ package com.inari.firefly.libgdx.intro;
 import com.inari.commons.geom.PositionF;
 import com.inari.commons.geom.Rectangle;
 import com.inari.commons.graphics.RGBColor;
-import com.inari.firefly.asset.AssetSystem;
+import com.inari.firefly.asset.Asset;
 import com.inari.firefly.control.task.Task;
 import com.inari.firefly.entity.EEntity;
 import com.inari.firefly.entity.ETransform;
@@ -21,22 +21,21 @@ public final class InitInariIntro extends Task {
 
     @Override
     public final void runTask() {
-        AssetSystem assetSystem = context.getSystem( AssetSystem.SYSTEM_KEY );
         EntitySystem entitySystem = context.getSystem( EntitySystem.SYSTEM_KEY );
         
-        int controllerId = context.getComponentBuilder( EntityController.TYPE_KEY )
-            .build( IntroAnimationController.class );
+        int controllerId = context.getComponentBuilder( EntityController.TYPE_KEY, IntroAnimationController.class )
+            .build();
                 
-        assetSystem .getAssetBuilder()
+        context.getComponentBuilder( Asset.TYPE_KEY, TextureAsset.class )
             .set( TextureAsset.NAME, BuildInariIntro.INTRO_TEXTURE )
             .set( TextureAsset.RESOURCE_NAME, BuildInariIntro.INARI_LOGO_RESOURCE_PATH )
-        .activate( TextureAsset.class );
-        TextureAsset textureAsset = assetSystem.getAssetAs( BuildInariIntro.INTRO_TEXTURE, TextureAsset.class );
-        assetSystem.getAssetBuilder()
+        .activate();
+        TextureAsset textureAsset = context.getSystemComponent( Asset.TYPE_KEY, BuildInariIntro.INTRO_TEXTURE, TextureAsset.class );
+        context.getComponentBuilder( Asset.TYPE_KEY, SpriteAsset.class )
             .set( SpriteAsset.NAME, BuildInariIntro.INTRO_SPRITE )
             .set( SpriteAsset.TEXTURE_ASSET_NAME, BuildInariIntro.INTRO_TEXTURE )
             .set( SpriteAsset.TEXTURE_REGION, new Rectangle( 0, 0, textureAsset.getTextureWidth(), textureAsset.getTextureHeight() ) )
-        .activate( SpriteAsset.class );
+        .activate();
         
         entitySystem.getEntityBuilder()
             .set( ETransform.VIEW_ID, 0 )
