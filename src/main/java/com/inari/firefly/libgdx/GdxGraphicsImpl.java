@@ -17,7 +17,7 @@ package com.inari.firefly.libgdx;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
-import java.util.Iterator;
+import java.util.List;
 
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
@@ -449,14 +449,18 @@ public final class GdxGraphicsImpl implements FFGraphics {
     }
 
     @Override
-    public final void flush( Iterator<View> virtualViews ) {
-        if ( virtualViews != null && virtualViews.hasNext() ) {
+    public final void flush( List<View> virtualViews ) {
+        if ( virtualViews != null && !virtualViews.isEmpty() ) {
             
             baseViewport.activate( spriteBatch, shapeRenderer, baseView, true );
             spriteBatch.begin();
             
-            while ( virtualViews.hasNext() ) {
-                View virtualView = virtualViews.next();
+            for ( int i = 0; i < virtualViews.size(); i++ ) {
+                View virtualView = virtualViews.get( i );
+                if ( !virtualView.isActive() ) {
+                    continue;
+                }
+ 
                 ViewportData viewport = viewports.get( virtualView.index() );
                 Rectangle bounds = virtualView.getBounds();
                 setColorAndBlendMode( virtualView.getTintColor(), virtualView.getBlendMode() );
