@@ -316,11 +316,11 @@ public final class GdxGraphicsImpl implements FFGraphics {
         }
         
         DynArray<RGBColor> colors = data.getColors();
-        Color color1 = getShapeColor( colors, 0 );
-        Color color2 = getShapeColor( colors, 1 );
-        Color color3 = getShapeColor( colors, 2 );
-        Color color4 = getShapeColor( colors, 3 );
-        shapeRenderer.setColor( color1 );
+        getShapeColor( colors, 0, SHAPE_COLOR_1 );
+        getShapeColor( colors, 1, SHAPE_COLOR_2 );
+        getShapeColor( colors, 2, SHAPE_COLOR_3 );
+        getShapeColor( colors, 3, SHAPE_COLOR_4 );
+        shapeRenderer.setColor( SHAPE_COLOR_1 );
         
         ShapeData.Type type = data.getShapeType();
         ShapeType shapeType = ( type == EShape.Type.POINT )? ShapeType.Point : ( data.isFill() )? ShapeType.Filled : ShapeType.Line;
@@ -351,7 +351,7 @@ public final class GdxGraphicsImpl implements FFGraphics {
             }
             case LINE: {
                 while ( index < vertices.length ) {
-                    shapeRenderer.line( vertices[ index++ ], vertices[ index++ ], vertices[ index++ ], vertices[ index++ ], color1, color2 );
+                    shapeRenderer.line( vertices[ index++ ], vertices[ index++ ], vertices[ index++ ], vertices[ index++ ], SHAPE_COLOR_1, SHAPE_COLOR_2 );
                 }
                 break;
             }
@@ -365,7 +365,7 @@ public final class GdxGraphicsImpl implements FFGraphics {
             }
             case RECTANGLE: {
                 while ( index < vertices.length ) {
-                    shapeRenderer.rect( vertices[ index++ ], vertices[ index++ ], vertices[ index++ ], vertices[ index++ ], color1, color2, color3, color4 );
+                    shapeRenderer.rect( vertices[ index++ ], vertices[ index++ ], vertices[ index++ ], vertices[ index++ ], SHAPE_COLOR_1, SHAPE_COLOR_2, SHAPE_COLOR_3, SHAPE_COLOR_4 );
                 }
                 break;
             }
@@ -400,7 +400,7 @@ public final class GdxGraphicsImpl implements FFGraphics {
                 while ( index < vertices.length ) {
                     shapeRenderer.triangle( 
                         vertices[ index++ ], vertices[ index++ ], vertices[ index++ ], 
-                        vertices[ index++ ], vertices[ index++ ], vertices[ index++ ], color1, color2, color3 
+                        vertices[ index++ ], vertices[ index++ ], vertices[ index++ ], SHAPE_COLOR_1, SHAPE_COLOR_2, SHAPE_COLOR_3 
                     );
                 }
                 break;
@@ -566,13 +566,18 @@ public final class GdxGraphicsImpl implements FFGraphics {
         return Gdx.graphics.getHeight();
     }
     
-    private Color getShapeColor( DynArray<RGBColor> colors, int index ) {
+    private final static Color SHAPE_COLOR_1 = new Color();
+    private final static Color SHAPE_COLOR_2 = new Color();
+    private final static Color SHAPE_COLOR_3 = new Color();
+    private final static Color SHAPE_COLOR_4 = new Color();
+    private void getShapeColor( final DynArray<RGBColor> colors, int index, final Color color ) {
         if ( !colors.contains( index ) ) {
-            return shapeRenderer.getColor();
+            color.set( shapeRenderer.getColor() );
+            return;
         }
         
         RGBColor rgbColor = colors.get( index );
-        return new Color( rgbColor.r, rgbColor.g, rgbColor.b, rgbColor.a );
+        color.set( rgbColor.r, rgbColor.g, rgbColor.b, rgbColor.a );
     }
 
     private void setColorAndBlendMode( RGBColor renderColor, BlendMode blendMode ) {
