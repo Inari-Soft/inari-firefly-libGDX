@@ -17,7 +17,6 @@ package com.inari.firefly.libgdx;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
-import java.util.List;
 
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
@@ -449,7 +448,7 @@ public final class GdxGraphicsImpl implements FFGraphics {
     }
 
     @Override
-    public final void flush( List<View> virtualViews ) {
+    public final void flush( DynArray<View> virtualViews ) {
         if ( virtualViews != null && !virtualViews.isEmpty() ) {
             
             baseViewport.activate( spriteBatch, shapeRenderer, baseView, true );
