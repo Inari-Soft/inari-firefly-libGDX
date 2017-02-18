@@ -317,10 +317,10 @@ public final class GdxGraphicsImpl implements FFGraphics {
         
         DynArray<RGBColor> colors = data.getColors();
         getShapeColor( colors, 0, SHAPE_COLOR_1 );
+        shapeRenderer.setColor( SHAPE_COLOR_1 );
         getShapeColor( colors, 1, SHAPE_COLOR_2 );
         getShapeColor( colors, 2, SHAPE_COLOR_3 );
         getShapeColor( colors, 3, SHAPE_COLOR_4 );
-        shapeRenderer.setColor( SHAPE_COLOR_1 );
         
         ShapeData.Type type = data.getShapeType();
         ShapeType shapeType = ( type == EShape.Type.POINT )? ShapeType.Point : ( data.isFill() )? ShapeType.Filled : ShapeType.Line;
