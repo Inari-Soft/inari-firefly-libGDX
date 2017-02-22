@@ -4,7 +4,7 @@ import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 import com.inari.commons.geom.PositionF;
 import com.inari.commons.graphics.RGBColor;
-import com.inari.firefly.entity.ETransform;
+import com.inari.firefly.graphics.ETransform;
 import com.inari.firefly.graphics.shape.EShape;
 import com.inari.firefly.graphics.shape.ShapeRenderSystem;
 import com.inari.firefly.system.FFContext;
