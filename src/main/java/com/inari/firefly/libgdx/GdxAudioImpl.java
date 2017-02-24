@@ -17,9 +17,9 @@ public final class GdxAudioImpl implements FFAudio {
     private final DynArray<Music> music;
     
     GdxAudioImpl() {
-        sounds = new DynArray<com.badlogic.gdx.audio.Sound>();
+        sounds = DynArray.create( com.badlogic.gdx.audio.Sound.class );
         lastPlayingSoundOnChannel = new IntBag( 5, -1 );
-        music = new DynArray<Music>();
+        music = DynArray.create( Music.class );
     }
     
     @Override

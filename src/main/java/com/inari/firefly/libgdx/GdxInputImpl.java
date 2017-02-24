@@ -11,7 +11,7 @@ public class GdxInputImpl extends FFInput {
     
     private IntBag buttonCodeMapping = new IntBag( 255, -1 );
     private BitSet pressedCodeMapping = new BitSet( 255 );
-    private DynArray<InputType> inputTypeMapping = new DynArray<InputType>();
+    private DynArray<InputType> inputTypeMapping = DynArray.create( InputType.class );
 
     @Override
     public final void mapKeyInput( ButtonType buttonType, int keyCode ) {

@@ -78,10 +78,10 @@ public final class GdxGraphicsImpl implements FFGraphics {
     private BlendMode currentBlendMode = BlendMode.NONE;
     
     GdxGraphicsImpl() {
-        textures = new DynArray<Texture>( 100 );
-        sprites = new DynArray<TextureRegion>( 100, 50 );
-        viewports = new DynArray<ViewportData>( 50 );
-        shaders = new DynArray<ShaderProgram>();
+        textures = DynArray.create( Texture.class, 100 ); 
+        sprites = DynArray.create( TextureRegion.class, 100, 50 );
+        viewports = DynArray.create( ViewportData.class, 20 );
+        shaders = DynArray.create( ShaderProgram.class );
         spriteBatch = new SpriteBatch();
         shapeRenderer = new ShapeRenderer();
     }
