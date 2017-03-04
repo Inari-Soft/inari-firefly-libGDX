@@ -9,11 +9,12 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.inari.firefly.graphics.BlendMode;
+import com.inari.firefly.libgdx.test.GdxFFTestApplicationAdapter;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.RenderEvent;
 import com.inari.firefly.system.RenderEventListener;
 
-public class BlendTest extends GdxFFApplicationAdapter {
+public class BlendTest extends GdxFFTestApplicationAdapter {
 
     @Override
     public String getTitle() {
@@ -100,24 +101,6 @@ public class BlendTest extends GdxFFApplicationAdapter {
         
     }
 
-    @Override
-    protected void resize( int width, int height, FFContext context ) {
-        // TODO Auto-generated method stub
-        
-    }
-
-    @Override
-    protected void pause( FFContext context ) {
-        // TODO Auto-generated method stub
-        
-    }
-
-    @Override
-    protected void resume( FFContext context ) {
-        // TODO Auto-generated method stub
-        
-    }
-    
     public static void main (String[] arg) {
         try {
             LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
