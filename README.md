@@ -1,6 +1,6 @@
 # Firefly with LibGDX
 
-[![Build Status](https://travis-ci.org/Inari-Soft/inari-firefly.svg?branch=master)](https://travis-ci.org/Inari-Soft/inari-firefly)
+firefly-core-project: [![Build Status](https://travis-ci.org/Inari-Soft/inari-firefly.svg?branch=master)](https://travis-ci.org/Inari-Soft/inari-firefly)
 
 **Introduction**
 
