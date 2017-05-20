@@ -34,11 +34,9 @@ import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.inari.commons.GeomUtils;
-import com.inari.commons.StringUtils;
 import com.inari.commons.geom.PositionF;
 import com.inari.commons.geom.Rectangle;
 import com.inari.commons.graphics.RGBColor;
-import com.inari.commons.lang.TypedKey;
 import com.inari.commons.lang.functional.IntFunction;
 import com.inari.commons.lang.list.DynArray;
 import com.inari.firefly.FFInitException;
@@ -59,8 +57,6 @@ import com.inari.firefly.system.external.TransformData;
 public final class GdxGraphicsImpl implements FFGraphics {
     
     private final static float FBO_SCALER = 2.0f;
-    
-    private FFContext context;
     
     private final DynArray<Texture> textures;
     private final DynArray<TextureRegion> sprites;
@@ -88,8 +84,6 @@ public final class GdxGraphicsImpl implements FFGraphics {
     
     @Override
     public void init( FFContext context ) {
-        this.context = context;
-        
        context.registerListener( ViewEvent.TYPE_KEY, this );
     }
     
@@ -156,24 +150,17 @@ public final class GdxGraphicsImpl implements FFGraphics {
         }
     }
 
-    // TODO make it simpler
     @Override
     public final int createTexture( final TextureData data ) {
         Texture texture = null;
         int textureId = -1;
-        String colorFilterName = data.getDynamicAttribute( GdxFireflyApp.DynamicAttributes.TEXTURE_COLOR_CONVERTER_NAME );
-        if ( !StringUtils.isBlank( colorFilterName ) ) {
-            TypedKey<IntFunction> colorFunctionKey = TypedKey.create( colorFilterName, IntFunction.class );
-            IntFunction colorFunction = context.getProperty( colorFunctionKey );
-            if ( colorFunction != null ) {
-                ColorFilteredTextureData textureData = new ColorFilteredTextureData( data.getResourceName(), colorFunction );
-                texture = new Texture( textureData );
-                textureId = textures.add( texture );
-            }
-        } 
-        
-        if ( textureId < 0 ) {
-            texture = new Texture( Gdx.files.internal( data.getResourceName() ) );
+        final IntFunction colorFunction = data.getColorConverter();
+        if ( colorFunction != null ) {
+            ColorFilteredTextureData textureData = new ColorFilteredTextureData( data.getResourceName(), colorFunction );
+            texture = new Texture( textureData );
+            textureId = textures.add( texture );
+        } else {
+            texture = new Texture( Gdx.files.internal( data.getResourceName() ), data.isMipmap() );
             textureId = textures.add( texture );
         }
         

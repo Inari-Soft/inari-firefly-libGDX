@@ -1,15 +1,10 @@
 package com.inari.firefly.libgdx;
 
-import java.util.ArrayList;
-import java.util.Collection;
-
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.inari.commons.geom.PositionF;
 import com.inari.commons.geom.Rectangle;
 import com.inari.firefly.asset.Asset;
-import com.inari.firefly.component.attr.AttributeKey;
-import com.inari.firefly.component.dynattr.DynamicAttribueMapper;
 import com.inari.firefly.control.ControllerSystem;
 import com.inari.firefly.control.state.StateSystem;
 import com.inari.firefly.control.state.WorkflowEvent;
@@ -35,14 +30,7 @@ public abstract class GdxFFApplicationAdapter extends ApplicationAdapter impleme
         Gdx.graphics.setTitle( getTitle() );
         firefly = new GdxFireflyApp();
         FFContext context = firefly.getContext();
-        
-        Collection<AttributeKey<?>> dynamicAttributes = getDynamicAttributes();
-        if ( dynamicAttributes != null ) {
-            for ( AttributeKey<?> dynamicAttribute : dynamicAttributes ) {
-                DynamicAttribueMapper.addDynamicAttribute( dynamicAttribute );
-            }
-        }
-        
+
         context.registerListener( WorkflowEvent.TYPE_KEY, this );
         int startTaskId = context.getComponentBuilder( Task.TYPE_KEY, BuildInariIntro.class )
             .set( Task.REMOVE_AFTER_RUN, true )
@@ -87,10 +75,6 @@ public abstract class GdxFFApplicationAdapter extends ApplicationAdapter impleme
         context.getSystem( TaskSystem.SYSTEM_KEY ).clear();
         context.getSystem( AnimationSystem.SYSTEM_KEY ).clear();
         context.getSystem( ControllerSystem.SYSTEM_KEY ).clear();
-    }
-
-    protected Collection<AttributeKey<?>> getDynamicAttributes() {
-        return new ArrayList<AttributeKey<?>>();
     }
     
     @Override
