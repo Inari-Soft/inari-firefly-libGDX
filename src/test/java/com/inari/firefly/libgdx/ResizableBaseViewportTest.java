@@ -5,8 +5,8 @@ import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 import com.inari.commons.geom.PositionF;
 import com.inari.commons.graphics.RGBColor;
 import com.inari.firefly.graphics.ETransform;
+import com.inari.firefly.graphics.rendering.RenderingSystem;
 import com.inari.firefly.graphics.shape.EShape;
-import com.inari.firefly.graphics.shape.ShapeRenderSystem;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.external.ShapeData;
 
@@ -22,7 +22,7 @@ public class ResizableBaseViewportTest extends GdxFFApplicationAdapter {
 
     @Override
     protected void init( FFContext context ) {
-        context.loadSystem( ShapeRenderSystem.SYSTEM_KEY );
+        context.loadSystem( RenderingSystem.SYSTEM_KEY );
         context.getEntityBuilder()
             .set( ETransform.VIEW_ID, 0 )
             .set( ETransform.POSITION , new PositionF( 0, 0 ) )

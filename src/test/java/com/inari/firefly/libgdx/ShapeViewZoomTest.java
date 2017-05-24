@@ -5,8 +5,8 @@ import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 import com.inari.commons.geom.PositionF;
 import com.inari.firefly.entity.EntitySystem;
 import com.inari.firefly.graphics.ETransform;
+import com.inari.firefly.graphics.rendering.RenderingSystem;
 import com.inari.firefly.graphics.shape.EShape;
-import com.inari.firefly.graphics.shape.ShapeRenderSystem;
 import com.inari.firefly.graphics.view.View;
 import com.inari.firefly.system.FFContext;
 
@@ -19,7 +19,7 @@ public class ShapeViewZoomTest extends GdxFFApplicationAdapter {
 
     @Override
     protected void init( FFContext context ) {
-        context.loadSystem( ShapeRenderSystem.SYSTEM_KEY );
+        context.loadSystem( RenderingSystem.SYSTEM_KEY );
         context.loadSystem( EntitySystem.SYSTEM_KEY );
         
         View baseView = context.getSystemComponent( View.TYPE_KEY, 0 );

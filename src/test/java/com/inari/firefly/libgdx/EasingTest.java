@@ -6,9 +6,8 @@ import com.inari.commons.geom.Easing;
 import com.inari.commons.graphics.RGBColor;
 import com.inari.firefly.graphics.BlendMode;
 import com.inari.firefly.graphics.ETransform;
+import com.inari.firefly.graphics.rendering.RenderingSystem;
 import com.inari.firefly.graphics.shape.EShape;
-import com.inari.firefly.graphics.shape.ShapeRenderSystem;
-import com.inari.firefly.graphics.sprite.SpriteViewSystem;
 import com.inari.firefly.graphics.text.EText;
 import com.inari.firefly.graphics.text.TextSystem;
 import com.inari.firefly.libgdx.test.GdxFFTestApplicationAdapter;
@@ -30,10 +29,9 @@ public class EasingTest extends GdxFFTestApplicationAdapter {
     
     @Override
     protected void init( FFContext context ) {
-        context.loadSystem( ShapeRenderSystem.SYSTEM_KEY );
+        context.loadSystem( RenderingSystem.SYSTEM_KEY );
         context.loadSystem( AnimationSystem.SYSTEM_KEY );
         context.loadSystem( TextSystem.SYSTEM_KEY );
-        context.loadSystem( SpriteViewSystem.SYSTEM_KEY );
         
         int index = 0;
         for ( Easing.Type easingType : Easing.Type.values() ) {
