@@ -42,7 +42,7 @@ import com.inari.commons.lang.list.DynArray;
 import com.inari.firefly.FFInitException;
 import com.inari.firefly.graphics.BlendMode;
 import com.inari.firefly.graphics.ShaderAsset;
-import com.inari.firefly.graphics.SpriteRenderable;
+import com.inari.firefly.graphics.rendering.SpriteRenderable;
 import com.inari.firefly.graphics.shape.EShape;
 import com.inari.firefly.graphics.view.View;
 import com.inari.firefly.graphics.view.ViewEvent;
