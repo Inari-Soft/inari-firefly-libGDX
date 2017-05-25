@@ -6,7 +6,6 @@ import com.inari.commons.geom.PositionF;
 import com.inari.commons.graphics.RGBColor;
 import com.inari.firefly.graphics.ETransform;
 import com.inari.firefly.graphics.text.EText;
-import com.inari.firefly.graphics.text.TextSystem;
 import com.inari.firefly.graphics.view.View;
 import com.inari.firefly.system.FFContext;
 
@@ -19,7 +18,6 @@ public class DefaultFontTest extends GdxFFApplicationAdapter{
 
     @Override
     protected void init( FFContext context ) {
-        context.loadSystem( TextSystem.SYSTEM_KEY );
         context.getSystemComponent( View.TYPE_KEY, 0 )
             .setClearColor( new RGBColor( 1, 1, 1, 1 ) );
 

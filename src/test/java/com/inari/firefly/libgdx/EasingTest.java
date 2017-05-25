@@ -9,7 +9,6 @@ import com.inari.firefly.graphics.ETransform;
 import com.inari.firefly.graphics.rendering.RenderingSystem;
 import com.inari.firefly.graphics.shape.EShape;
 import com.inari.firefly.graphics.text.EText;
-import com.inari.firefly.graphics.text.TextSystem;
 import com.inari.firefly.libgdx.test.GdxFFTestApplicationAdapter;
 import com.inari.firefly.physics.animation.Animation;
 import com.inari.firefly.physics.animation.AnimationSystem;
@@ -31,7 +30,6 @@ public class EasingTest extends GdxFFTestApplicationAdapter {
     protected void init( FFContext context ) {
         context.loadSystem( RenderingSystem.SYSTEM_KEY );
         context.loadSystem( AnimationSystem.SYSTEM_KEY );
-        context.loadSystem( TextSystem.SYSTEM_KEY );
         
         int index = 0;
         for ( Easing.Type easingType : Easing.Type.values() ) {

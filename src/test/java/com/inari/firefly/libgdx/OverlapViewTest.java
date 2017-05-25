@@ -11,7 +11,6 @@ import com.inari.firefly.graphics.ETransform;
 import com.inari.firefly.graphics.rendering.RenderingSystem;
 import com.inari.firefly.graphics.shape.EShape;
 import com.inari.firefly.graphics.text.EText;
-import com.inari.firefly.graphics.text.TextSystem;
 import com.inari.firefly.graphics.view.Layer;
 import com.inari.firefly.graphics.view.View;
 import com.inari.firefly.system.FFContext;
@@ -25,7 +24,6 @@ public class OverlapViewTest extends GdxFFApplicationAdapter {
 
     @Override
     protected void init( FFContext context ) {
-        context.loadSystem( TextSystem.SYSTEM_KEY );
         context.loadSystem( RenderingSystem.SYSTEM_KEY );
         context.loadSystem( EntitySystem.SYSTEM_KEY );
         
