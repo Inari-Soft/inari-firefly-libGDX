@@ -580,8 +580,8 @@ public final class GdxGraphicsImpl implements FFGraphics {
         }
     }
     
-    private void setShaderForSpriteBatch( SpriteRenderable spriteRenderable ) {
-        int shaderId = spriteRenderable.getShaderId();
+    private void setShaderForSpriteBatch( final SpriteRenderable spriteRenderable ) {
+        final int shaderId = spriteRenderable.getShaderId();
         if ( shaderId != activeShaderId ) {
             if ( shaderId < 0 ) {
                 spriteBatch.setShader( null );
