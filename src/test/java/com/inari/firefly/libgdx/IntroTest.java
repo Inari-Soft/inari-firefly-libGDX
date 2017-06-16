@@ -34,8 +34,9 @@ public class IntroTest extends GdxFFApplicationAdapter {
         try {
             LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
             config.resizable = false;
-            config.width = 800;
-            config.height = 600;
+            config.width = 704;
+            config.height = 480;
+            config.fullscreen = true;
             new LwjglApplication( new IntroTest(), config );
         } catch ( Throwable t ) {
             t.printStackTrace();
