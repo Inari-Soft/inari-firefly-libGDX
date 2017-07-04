@@ -30,6 +30,10 @@ public abstract class GdxFFApplicationAdapter extends ApplicationAdapter impleme
         Gdx.graphics.setTitle( getTitle() );
         firefly = new GdxFireflyApp();
         FFContext context = firefly.getContext();
+        
+        context.loadSystem( StateSystem.SYSTEM_KEY );
+        context.loadSystem( TaskSystem.SYSTEM_KEY );
+        context.loadSystem( AnimationSystem.SYSTEM_KEY );
 
         context.registerListener( WorkflowEvent.TYPE_KEY, this );
         int startTaskId = context.getComponentBuilder( Task.TYPE_KEY, BuildInariIntro.class )
@@ -71,9 +75,9 @@ public abstract class GdxFFApplicationAdapter extends ApplicationAdapter impleme
     private void clearIntro( FFContext context ) {
         context.getSystem( EntitySystem.SYSTEM_KEY ).deleteAllActive();
         context.deleteSystemComponent( Asset.TYPE_KEY, BuildInariIntro.INTRO_TEXTURE );
-        context.getSystem( StateSystem.SYSTEM_KEY ).clear();
-        context.getSystem( TaskSystem.SYSTEM_KEY ).clear();
-        context.getSystem( AnimationSystem.SYSTEM_KEY ).clear();
+        context.disposeSystem( StateSystem.SYSTEM_KEY );
+        context.disposeSystem( TaskSystem.SYSTEM_KEY );
+        context.disposeSystem( AnimationSystem.SYSTEM_KEY );
         context.getSystem( ControllerSystem.SYSTEM_KEY ).clear();
     }
     

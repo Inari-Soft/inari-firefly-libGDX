@@ -23,7 +23,7 @@ public class SpriteFlippingTest extends GdxFFApplicationAdapter {
     protected void init( FFContext context ) {
         View baseView = context.getSystemComponent( View.TYPE_KEY, 0 );
         baseView.setBlendMode( null );
-        baseView.setClearColor( new RGBColor( 1f, 1f, 1f, 1f ) );
+        baseView.setClearColor( new RGBColor( 0f, 0f, 0f, 1f ) );
         
         context.getComponentBuilder( TextureAsset.TYPE_KEY, TextureAsset.class )
             .set( TextureAsset.NAME, "TestTexture" )

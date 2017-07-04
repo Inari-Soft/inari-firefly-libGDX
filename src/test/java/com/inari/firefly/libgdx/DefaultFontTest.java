@@ -19,7 +19,7 @@ public class DefaultFontTest extends GdxFFApplicationAdapter{
     @Override
     protected void init( FFContext context ) {
         context.getSystemComponent( View.TYPE_KEY, 0 )
-            .setClearColor( new RGBColor( 1, 1, 1, 1 ) );
+            .setClearColor( new RGBColor( 0, 0, 0, 1 ) );
 
         context.getEntityBuilder()
             .set( ETransform.VIEW_ID, 0 )
