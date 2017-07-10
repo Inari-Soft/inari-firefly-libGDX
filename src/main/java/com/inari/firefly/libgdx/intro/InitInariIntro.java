@@ -24,7 +24,7 @@ public final class InitInariIntro extends Task {
         EntitySystem entitySystem = context.getSystem( EntitySystem.SYSTEM_KEY );
         
         int controllerId = context.getComponentBuilder( EntityController.TYPE_KEY, IntroAnimationController.class )
-            .build();
+            .activate();
                 
         context.getComponentBuilder( Asset.TYPE_KEY, TextureAsset.class )
             .set( TextureAsset.NAME, BuildInariIntro.INTRO_TEXTURE )
