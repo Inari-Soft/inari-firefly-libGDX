@@ -527,12 +527,6 @@ public final class GdxGraphicsImpl implements FFGraphics {
                 fbo.begin();
             }
             
-            Gdx.gl.glTexParameteri( GL20.GL_TEXTURE_2D, GL20.GL_TEXTURE_WRAP_S, GL20.GL_CLAMP_TO_EDGE );
-            Gdx.gl.glTexParameteri( GL20.GL_TEXTURE_2D, GL20.GL_TEXTURE_WRAP_T, GL20.GL_CLAMP_TO_EDGE ); 
-            Gdx.gl.glTexParameterf( GL20.GL_TEXTURE_2D, GL20.GL_TEXTURE_MIN_FILTER, GL20.GL_NEAREST);
-            Gdx.gl.glTexParameterf( GL20.GL_TEXTURE_2D, GL20.GL_TEXTURE_MAG_FILTER, GL20.GL_NEAREST);
-
-            
             if ( clear ) {
                 Gdx.gl.glClearColor( clearColor.r, clearColor.g, clearColor.b, clearColor.a );
                 Gdx.gl.glClear( GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT );
