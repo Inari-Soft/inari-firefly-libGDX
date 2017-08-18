@@ -27,6 +27,7 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.Texture.TextureWrap;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
@@ -167,6 +168,7 @@ public final class GdxGraphicsImpl implements FFGraphics {
         data.setTextureWidth( texture.getWidth() );
         data.setTextureHeight( texture.getHeight() );
         
+        texture.setWrap( TextureWrap.ClampToEdge, TextureWrap.ClampToEdge );
         return textureId;
     }
 
