@@ -58,7 +58,7 @@ import com.inari.firefly.system.external.TransformData;
 
 public final class GdxGraphicsImpl implements FFGraphics {
     
-    private final static float FBO_SCALER = 6.0f;
+    private final static float FBO_SCALER = 2.0f;
     
     private final DynArray<Texture> textures;
     private final DynArray<TextureRegion> sprites;
