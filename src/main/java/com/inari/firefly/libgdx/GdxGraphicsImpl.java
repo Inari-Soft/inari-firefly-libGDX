@@ -58,8 +58,6 @@ import com.inari.firefly.system.external.TransformData;
 
 public final class GdxGraphicsImpl implements FFGraphics {
     
-    private final static float FBO_SCALER = 1.5f;
-    
     private final DynArray<Texture> textures;
     private final DynArray<TextureRegion> sprites;
     private final DynArray<ViewportData> viewports;
@@ -168,6 +166,19 @@ public final class GdxGraphicsImpl implements FFGraphics {
         
         data.setTextureWidth( texture.getWidth() );
         data.setTextureHeight( texture.getHeight() );
+        
+        if ( data.getWrapS() >= 0 ) {
+            texture.setWrap( getLibGDXTextureWrap( data.getWrapS() ), texture.getVWrap() );
+        }
+        if ( data.getWrapT() >= 0 ) {
+            texture.setWrap( texture.getUWrap(), getLibGDXTextureWrap( data.getWrapT() ) );
+        }
+        if ( data.getMinFilter() >= 0 ) {
+            texture.setFilter( getLibGDXTextureFilter( data.getMinFilter() ), texture.getMagFilter() );
+        }
+        if ( data.getMagFilter() >= 0 ) {
+            texture.setFilter( texture.getMinFilter(), getLibGDXTextureFilter( data.getMagFilter() ) );
+        }
         
         return textureId;
     }
@@ -477,18 +488,18 @@ public final class GdxGraphicsImpl implements FFGraphics {
     
 
     private ViewportData createBaseViewport( View view ) {
-        Rectangle bounds = view.getBounds();
-        OrthographicCamera camera = new OrthographicCamera( bounds.width, bounds.height );
-        return new ViewportData( camera, null, null );
+        final Rectangle bounds = view.getBounds();
+        return new ViewportData( new OrthographicCamera( bounds.width, bounds.height ), null, null );
     }
 
     private ViewportData createVirtualViewport( View view ) {
-        Rectangle bounds = view.getBounds();
-        OrthographicCamera camera = new OrthographicCamera( bounds.width, bounds.height );
-        FrameBuffer frameBuffer = new FrameBuffer( Format.RGBA8888, (int) ( bounds.width * FBO_SCALER ), (int) ( bounds.height * FBO_SCALER ), false ) ;
-        TextureRegion textureRegion = new TextureRegion( frameBuffer.getColorBufferTexture() );
-        textureRegion.flip( false, false );
+        final Rectangle bounds = view.getBounds();
+        final OrthographicCamera camera = new OrthographicCamera( bounds.width, bounds.height );
+        final float fboScaler = view.getFboScaler();
+        final FrameBuffer frameBuffer = new FrameBuffer( Format.RGBA8888, (int) ( bounds.width * fboScaler ), (int) ( bounds.height * fboScaler ), false ) ;
+        final TextureRegion textureRegion = new TextureRegion( frameBuffer.getColorBufferTexture() );
         
+        textureRegion.flip( false, false );
         return new ViewportData( camera, frameBuffer, textureRegion );
     }
 
@@ -583,6 +594,26 @@ public final class GdxGraphicsImpl implements FFGraphics {
                 activeShaderId = shaderId;
             }
         }
+    }
+    
+    private TextureWrap getLibGDXTextureWrap( int glConst ) {
+        for ( TextureWrap tw : TextureWrap.values() ) {
+            if ( tw.getGLEnum() == glConst ) {
+                return tw;
+            }
+        }
+        
+        return TextureWrap.Repeat;
+    }
+    
+    private TextureFilter getLibGDXTextureFilter( int glConst ) {
+        for ( TextureFilter tf : TextureFilter.values() ) {
+            if ( tf.getGLEnum() == glConst ) {
+                return tf;
+            }
+        }
+        
+        return TextureFilter.Linear;
     }
 
 }
