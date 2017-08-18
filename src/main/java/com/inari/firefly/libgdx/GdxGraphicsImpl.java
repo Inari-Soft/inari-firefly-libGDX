@@ -58,7 +58,7 @@ import com.inari.firefly.system.external.TransformData;
 
 public final class GdxGraphicsImpl implements FFGraphics {
     
-    private final static float FBO_SCALER = 4.0f;
+    private final static float FBO_SCALER = 6.0f;
     
     private final DynArray<Texture> textures;
     private final DynArray<TextureRegion> sprites;
@@ -169,8 +169,6 @@ public final class GdxGraphicsImpl implements FFGraphics {
         data.setTextureWidth( texture.getWidth() );
         data.setTextureHeight( texture.getHeight() );
         
-        texture.setWrap( TextureWrap.ClampToEdge, TextureWrap.ClampToEdge );
-        texture.setFilter( TextureFilter.Nearest, TextureFilter.Nearest );
         return textureId;
     }
 
@@ -528,8 +526,12 @@ public final class GdxGraphicsImpl implements FFGraphics {
             if ( fbo != null ) {
                 fbo.begin();
             }
+            
+            Gdx.gl.glTexParameteri( GL20.GL_TEXTURE_2D, GL20.GL_TEXTURE_WRAP_S, GL20.GL_CLAMP_TO_EDGE );
+            Gdx.gl.glTexParameteri( GL20.GL_TEXTURE_2D, GL20.GL_TEXTURE_WRAP_T, GL20.GL_CLAMP_TO_EDGE ); 
             Gdx.gl.glTexParameterf( GL20.GL_TEXTURE_2D, GL20.GL_TEXTURE_MIN_FILTER, GL20.GL_NEAREST);
             Gdx.gl.glTexParameterf( GL20.GL_TEXTURE_2D, GL20.GL_TEXTURE_MAG_FILTER, GL20.GL_NEAREST);
+
             
             if ( clear ) {
                 Gdx.gl.glClearColor( clearColor.r, clearColor.g, clearColor.b, clearColor.a );
