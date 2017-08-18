@@ -27,6 +27,7 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.Texture.TextureWrap;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -169,6 +170,7 @@ public final class GdxGraphicsImpl implements FFGraphics {
         data.setTextureHeight( texture.getHeight() );
         
         texture.setWrap( TextureWrap.ClampToEdge, TextureWrap.ClampToEdge );
+        texture.setFilter( TextureFilter.Nearest, TextureFilter.Nearest );
         return textureId;
     }
 
@@ -526,6 +528,8 @@ public final class GdxGraphicsImpl implements FFGraphics {
             if ( fbo != null ) {
                 fbo.begin();
             }
+            Gdx.gl.glTexParameterf( GL20.GL_TEXTURE_2D, GL20.GL_TEXTURE_MIN_FILTER, GL20.GL_NEAREST);
+            Gdx.gl.glTexParameterf( GL20.GL_TEXTURE_2D, GL20.GL_TEXTURE_MAG_FILTER, GL20.GL_NEAREST);
             
             if ( clear ) {
                 Gdx.gl.glClearColor( clearColor.r, clearColor.g, clearColor.b, clearColor.a );
