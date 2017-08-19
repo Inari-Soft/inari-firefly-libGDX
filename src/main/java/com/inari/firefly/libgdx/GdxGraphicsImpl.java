@@ -526,7 +526,7 @@ public final class GdxGraphicsImpl implements FFGraphics {
             float zoom = view.getZoom();
             RGBColor clearColor = view.getClearColor();
             Rectangle bounds = view.getBounds();
-            System.out.println( "width: "+bounds.width * zoom );
+
             camera.setToOrtho( true, bounds.width * zoom, bounds.height * zoom );
             camera.position.x = camera.position.x + worldPosition.x;
             camera.position.y = camera.position.y + worldPosition.y;
