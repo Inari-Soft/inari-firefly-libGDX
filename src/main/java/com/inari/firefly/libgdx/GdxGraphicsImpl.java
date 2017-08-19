@@ -532,7 +532,7 @@ public final class GdxGraphicsImpl implements FFGraphics {
             camera.position.y = camera.position.y + worldPosition.y;
             camera.update();
             spriteBatch.setProjectionMatrix( camera.combined );
-            shapeRenderer.setProjectionMatrix( camera.combined );
+            shapeRenderer.setProjectionMatrix( camera.projection );
             
             if ( fbo != null ) {
                 fbo.begin();
