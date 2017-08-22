@@ -8,11 +8,13 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
+import com.inari.commons.geom.Rectangle;
 import com.inari.firefly.graphics.BlendMode;
 import com.inari.firefly.libgdx.test.GdxFFTestApplicationAdapter;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.RenderEvent;
 import com.inari.firefly.system.RenderEventListener;
+import com.inari.firefly.system.external.FFTimer;
 
 public class BlendTest extends GdxFFTestApplicationAdapter {
 
@@ -45,7 +47,7 @@ public class BlendTest extends GdxFFTestApplicationAdapter {
             float dClearAlpha = 0.1f;
         
             @Override
-            public void render( RenderEvent event ) {
+            public void render( int viewId, int layerId, final Rectangle clip, final FFTimer timer ) {
                 
                 
                 blendAlpha += dAlpha;
