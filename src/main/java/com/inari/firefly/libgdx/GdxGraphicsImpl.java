@@ -84,7 +84,7 @@ public final class GdxGraphicsImpl implements FFGraphics {
     
     @Override
     public void init( FFContext context ) {
-       context.registerListener( ViewEvent.TYPE_KEY, this );
+       context.registerListener( ViewEvent.TYPE_KEY, this ); 
     }
     
     @Override
