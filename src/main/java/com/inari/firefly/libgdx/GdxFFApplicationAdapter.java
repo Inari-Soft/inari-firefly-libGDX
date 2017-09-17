@@ -78,7 +78,7 @@ public abstract class GdxFFApplicationAdapter extends ApplicationAdapter impleme
         context.disposeSystem( StateSystem.SYSTEM_KEY );
         context.disposeSystem( TaskSystem.SYSTEM_KEY );
         context.disposeSystem( AnimationSystem.SYSTEM_KEY );
-        context.getSystem( ControllerSystem.SYSTEM_KEY ).clear();
+        context.getSystem( ControllerSystem.SYSTEM_KEY ).clearSystem();
     }
     
     @Override
