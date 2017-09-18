@@ -1,11 +1,9 @@
 package com.inari.firefly.libgdx.intro;
 
 import com.inari.firefly.control.state.StateChange;
-import com.inari.firefly.control.state.StateSystem;
 import com.inari.firefly.control.state.Workflow;
 import com.inari.firefly.control.state.WorkflowEventTrigger;
 import com.inari.firefly.control.task.Task;
-import com.inari.firefly.control.task.TaskSystem;
 
 public class BuildInariIntro extends Task {
     
@@ -27,10 +25,7 @@ public class BuildInariIntro extends Task {
 
     @Override
     public void runTask() {
-        StateSystem stateSystem = context.getSystem( StateSystem.SYSTEM_KEY );
-        TaskSystem taskSystem = context.getSystem( TaskSystem.SYSTEM_KEY );
-        
-        taskSystem.getTaskBuilder( InitInariIntro.class )
+        context.getComponentBuilder( Task.TYPE_KEY, InitInariIntro.class )
             .set( Task.NAME, INTRO_START_TASK )
             .set( Task.REMOVE_AFTER_RUN, true ) 
             .add( 
@@ -42,16 +37,12 @@ public class BuildInariIntro extends Task {
                 ) 
             )
         .build();
-            
-        
-        int workflowId = stateSystem.getWorkflowBuilder()
+        context.getComponentBuilder( Workflow.TYPE_KEY )
             .set( Workflow.NAME, INTRO_WORKFLOW )
             .set( Workflow.START_STATE_NAME, INTRO_START_STATE )
             .add( Workflow.STATES, INTRO_START_STATE )
             .add( Workflow.STATE_CHANGES, new StateChange( INTRO_STATE_CHANGE, INTRO_START_STATE, null, new InariIntroFinishedCondition() ) )
-        .build();
-
-        stateSystem.activateWorkflow( workflowId );
+        .activate();
     }
 
 }
