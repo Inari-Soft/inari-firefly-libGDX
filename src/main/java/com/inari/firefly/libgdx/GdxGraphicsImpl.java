@@ -41,7 +41,7 @@ import com.inari.commons.geom.Rectangle;
 import com.inari.commons.graphics.RGBColor;
 import com.inari.commons.lang.functional.IntFunction;
 import com.inari.commons.lang.list.DynArray;
-import com.inari.commons.lang.list.ReadOnlyDynArray;
+import com.inari.commons.lang.list.DynArrayRO;
 import com.inari.firefly.FFInitException;
 import com.inari.firefly.graphics.BlendMode;
 import com.inari.firefly.graphics.ShaderAsset;
@@ -305,7 +305,7 @@ public final class GdxGraphicsImpl implements FFGraphics {
             }
         }
         
-        ReadOnlyDynArray<RGBColor> colors = data.getColors();
+        DynArrayRO<RGBColor> colors = data.getColors();
         getShapeColor( colors, 0, SHAPE_COLOR_1 );
         shapeRenderer.setColor( SHAPE_COLOR_1 );
         getShapeColor( colors, 1, SHAPE_COLOR_2 );
@@ -438,7 +438,7 @@ public final class GdxGraphicsImpl implements FFGraphics {
     }
 
     @Override
-    public final void flush( DynArray<View> virtualViews ) {
+    public final void flush( DynArrayRO<View> virtualViews ) {
         if ( virtualViews != null && !virtualViews.isEmpty() ) {
             
             baseViewport.activate( spriteBatch, shapeRenderer, baseView, true );
@@ -560,7 +560,7 @@ public final class GdxGraphicsImpl implements FFGraphics {
     private final static Color SHAPE_COLOR_2 = new Color();
     private final static Color SHAPE_COLOR_3 = new Color();
     private final static Color SHAPE_COLOR_4 = new Color();
-    private void getShapeColor( final ReadOnlyDynArray<RGBColor> colors, int index, final Color color ) {
+    private void getShapeColor( final DynArrayRO<RGBColor> colors, int index, final Color color ) {
         if ( !colors.contains( index ) ) {
             color.set( shapeRenderer.getColor() );
             return;
